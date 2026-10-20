@@ -81,7 +81,7 @@ function checkPrediction(id,expected){
 }
 function enhance(){
  // Investigate before clicking: students inspect recognisable file signatures.
- add('[data-screen="av1"] .panel:first-of-type',prediction("prediction-a1","Before scanning: which files do you expect this exact-signature scanner to quarantine?",AV1.map(f=>f.name)),"beforebegin");
+ add('[data-screen="av1"] .panel.inset',prediction("prediction-a1","Before scanning: which files do you expect this exact-signature scanner to quarantine?",AV1.map(f=>f.name)),"beforebegin");
  $("av1-scan").addEventListener("click",()=>checkPrediction("prediction-a1",[3,5]));
  add('[data-screen="av1"] .nav',prompt("av1-reason","Explain the result","Why was invoice_update.exe missed even though it appears to be harmful?"),"beforebegin");
  add('[data-screen="av2"] .nav',concept("concept-variant","What changed about the two malware variants?",["They became harmless.","Their identifiers changed while their simulated harmful behaviours remained.","They changed the firewall port."],1,"An exact match requires the same recognised pattern. A modified file may not match the recorded identifier.")+prompt("av2-reason","Apply what you learned","Suggest one type of evidence beyond an exact signature that could help detect a variant."),"beforebegin");
