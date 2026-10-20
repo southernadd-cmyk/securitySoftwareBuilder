@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Security Bench — Measures &amp; Threats</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --paper:#EFF0EA; --bench:#E4E6DD; --panel:#F6F6F1;
+    --ink:#18233A; --ink-soft:#55606F; --ink-faint:#8A93A0;
+    --allow:#2F6B4F; --allow-wash:#E2ECE4;
+    --block:#9E3B2A; --block-wash:#F0E1DC;
+    --amber:#C8891C; --amber-wash:#F4E9CF;
+    --rule:#CDCDC0; --rule-firm:#B4B6A8;
+    --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+    --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+    --maxw:960px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px)}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.5; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px}
+  p{margin:0 0 1em}
+  .teach{max-width:64ch}
+  .teach p,.teach li,.lede{font-family:var(--serif); font-size:1.075rem; line-height:1.62; color:#20293d}
+  .teach h3{margin:1.4em 0 .4em}
+  .teach ul{margin:0 0 1em; padding-left:1.1em}
+  .teach li{margin:.2em 0}
+  mark{background:var(--amber-wash); color:inherit; padding:.02em .18em; border-radius:1px}
+  code,.mono{font-family:var(--mono); font-size:.92em}
+
+  header.bar{position:sticky; top:0; z-index:20; background:rgba(239,240,234,.9); backdrop-filter:saturate(1.1) blur(6px); border-bottom:1px solid var(--rule); padding-top:env(safe-area-inset-top,0px)}
+  body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); background:var(--paper); z-index:30}
+  .bar-inner{max-width:var(--maxw); margin:0 auto; padding:10px 24px; display:flex; align-items:center; gap:18px}
+  .brand{font-weight:700; letter-spacing:-.01em; font-size:.98rem; white-space:nowrap}
+  .brand span{color:var(--ink-faint); font-weight:500}
+  .spine{display:flex; gap:4px; flex:1; min-width:0; overflow:hidden}
+  .spine .seg{flex:1; height:4px; background:var(--rule-firm); border-radius:2px; opacity:.5}
+  .spine .seg.on{opacity:1; background:var(--ink)}
+  .stepno{font-family:var(--mono); font-size:.8rem; color:var(--ink-soft); white-space:nowrap}
+
+  main{padding:40px 0 120px}
+  .screen{display:none; animation:fade .32s ease both}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+  @media (prefers-reduced-motion:reduce){.screen{animation:none}}
+
+  .kicker{font-family:var(--mono); font-size:.82rem; color:var(--ink-soft); margin-bottom:.5rem}
+  .kicker b{color:var(--ink); font-weight:600}
+  h1{font-size:clamp(2.1rem,5vw,3.2rem); line-height:1.04; letter-spacing:-.02em; font-weight:700; margin:.1em 0 .3em}
+  h2{font-size:clamp(1.5rem,3.4vw,2.1rem); line-height:1.1; letter-spacing:-.015em; margin:.1em 0 .5em}
+  h3{font-size:1.12rem; letter-spacing:-.01em; margin:0 0 .3em}
+
+  .cover{min-height:min(60vh,520px); display:flex; flex-direction:column; justify-content:center}
+  .cover h1{max-width:18ch}
+  .cover .lede{max-width:54ch; color:var(--ink-soft); font-style:italic}
+
+  .btn{font-family:var(--sans); font-weight:600; font-size:1rem; border:1px solid var(--ink); background:var(--ink); color:#fff; padding:11px 20px; border-radius:3px; cursor:pointer; transition:background .15s,transform .04s}
+  .btn:hover{background:#0f1830}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent; color:var(--ink)}
+  .btn.ghost:hover{background:#e3e4dc}
+  .btn.small{padding:7px 13px; font-size:.9rem}
+  .btn:disabled{opacity:.4; cursor:not-allowed}
+  .btn:focus-visible,button:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2.5px solid var(--amber); outline-offset:2px}
+  .nav{display:flex; align-items:center; gap:12px; margin-top:40px; padding-top:22px; border-top:1px solid var(--rule)}
+  .nav .spacer{flex:1}
+  .link{background:none; border:none; color:var(--ink-soft); font-family:var(--sans); font-size:.92rem; cursor:pointer; text-decoration:underline; text-underline-offset:3px; padding:6px}
+  .link:hover{color:var(--ink)}
+  a{color:var(--ink); text-decoration:underline; text-underline-offset:3px}
+  a:hover{color:var(--allow)}
+
+  .panel{background:var(--panel); border:1px solid var(--rule-firm); border-radius:3px}
+  .panel.inset{background:var(--bench)}
+  .panel-h{padding:11px 16px; border-bottom:1px solid var(--rule); font-size:.82rem; color:var(--ink-soft); display:flex; justify-content:space-between; align-items:center}
+  .panel-h .tag{font-family:var(--mono); font-size:.74rem; color:var(--ink-faint)}
+  .panel-b{padding:16px}
+
+  .stamp{display:inline-block; font-family:var(--sans); font-weight:700; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border:2px solid currentColor; border-radius:3px; transform:rotate(-1.5deg)}
+  .stamp.good{color:var(--allow)} .stamp.bad{color:var(--block)} .stamp.neutral{color:var(--ink-faint)}
+
+  .callout{border-left:3px solid var(--amber); background:var(--amber-wash); padding:13px 16px; border-radius:0 3px 3px 0; margin:20px 0; max-width:66ch}
+  .callout .ch{font-weight:600; font-size:.88rem; margin-bottom:3px}
+  .callout p{margin:0; font-family:var(--serif); font-size:.95rem; color:#3a3326}
+  .note{font-size:.84rem; color:var(--ink-faint); font-family:var(--serif); font-style:italic}
+  hr.soft{border:none; border-top:1px solid var(--rule); margin:26px 0}
+
+  /* lesson-at-a-glance */
+  .glance{border:1px solid var(--rule-firm); border-radius:3px; background:var(--panel); margin:26px 0; max-width:620px}
+  .glance .gh{padding:10px 16px; border-bottom:1px solid var(--rule); font-size:.8rem; color:var(--ink-soft); font-family:var(--mono)}
+  .grow{display:grid; grid-template-columns:62px 1fr; border-bottom:1px solid var(--rule)}
+  .grow:last-child{border-bottom:none}
+  .grow .gt{padding:10px 12px; font-family:var(--mono); font-size:.8rem; color:var(--ink-soft); border-right:1px solid var(--rule); background:var(--bench)}
+  .grow .gd{padding:10px 14px; font-size:.92rem}
+  .grow .gd b{font-weight:600}
+
+  /* category classification */
+  .assign{display:flex; flex-direction:column; gap:8px}
+  .arow{border:1px solid var(--rule); border-left:3px solid var(--rule-firm); border-radius:2px; background:#fff; padding:10px 12px}
+  .arow .top{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap}
+  .arow .m{font-size:.92rem; font-weight:500}
+  .abtns{display:flex; gap:5px; flex-wrap:wrap}
+  .catb{font-family:var(--sans); font-size:.78rem; border:1px solid var(--rule-firm); background:#fff; border-radius:2px; padding:6px 10px; cursor:pointer; color:var(--ink)}
+  .catb:hover{border-color:var(--ink)}
+  .catb.sel{background:var(--ink); color:#fff; border-color:var(--ink)}
+  .arow.correct{border-left-color:var(--allow)}
+  .arow.incorrect{border-left-color:var(--block)}
+  .arow .fb{display:none; font-size:.82rem; color:var(--ink-soft); font-family:var(--serif); margin-top:7px; padding-top:7px; border-top:1px dashed var(--rule)}
+  .arow.graded .fb{display:block}
+
+  /* threat candidate cards */
+  .threatcard{border:1px solid var(--rule-firm); border-radius:3px; background:var(--panel); margin:16px 0}
+  .threatcard .th{padding:13px 16px; border-bottom:1px solid var(--rule); display:flex; justify-content:space-between; gap:10px; align-items:baseline; flex-wrap:wrap}
+  .threatcard .th h3{margin:0}
+  .threatcard .th .cat{font-family:var(--mono); font-size:.74rem; color:var(--ink-faint)}
+  .threatcard .tb{padding:14px 16px}
+  .cand{border:1px solid var(--rule); border-left:3px solid var(--rule-firm); border-radius:2px; background:#fff; padding:10px 12px; margin-bottom:9px}
+  .cand:last-child{margin-bottom:0}
+  .cand .cname{font-weight:500; font-size:.92rem}
+  .cand .cdesc{font-size:.82rem; color:var(--ink-soft); font-family:var(--serif); margin-top:2px}
+  .cand-btns{display:flex; gap:6px; margin-top:9px}
+  .hbtn{font-family:var(--sans); font-size:.82rem; border:1px solid var(--rule-firm); background:#fff; border-radius:2px; padding:6px 13px; cursor:pointer; color:var(--ink)}
+  .hbtn:hover{border-color:var(--ink)}
+  .hbtn.on-y{background:var(--allow-wash); border-color:var(--allow); color:var(--allow); font-weight:600}
+  .hbtn.on-n{background:var(--block-wash); border-color:var(--block); color:var(--block); font-weight:600}
+  .cand .verdict{display:none; margin-top:9px; padding-top:9px; border-top:1px dashed var(--rule); font-size:.84rem}
+  .cand.revealed .verdict{display:block}
+  .cand.right{border-left-color:var(--allow)}
+  .cand.wrong{border-left-color:var(--block)}
+  .outcome{font-weight:600; font-family:var(--mono); font-size:.76rem}
+  .outcome.ok{color:var(--allow)} .outcome.no{color:var(--block)}
+  .vwhy{color:var(--ink-soft); font-family:var(--serif); font-size:.92rem; margin-top:3px}
+
+  .tally{font-family:var(--mono); font-size:.9rem; color:var(--ink-soft); margin:4px 0 0}
+  .tally b{color:var(--ink)}
+
+  /* measure checklist (layering + context) */
+  .mlist{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+  @media(max-width:620px){.mlist{grid-template-columns:1fr}}
+  .mtog{display:flex; align-items:flex-start; gap:9px; padding:9px 11px; border:1px solid var(--rule); border-radius:2px; background:#fff; cursor:pointer}
+  .mtog:hover{border-color:var(--rule-firm)}
+  .mtog input{margin-top:3px; accent-color:var(--ink); width:16px; height:16px; flex:none}
+  .mtog .mn{font-size:.9rem}
+  .mtog .mc{font-size:.76rem; color:var(--ink-faint); font-family:var(--mono)}
+  .mtog.sel{background:var(--amber-wash); border-color:var(--amber)}
+
+  .readout{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--rule); border:1px solid var(--rule-firm); border-radius:3px; overflow:hidden; margin:18px 0}
+  @media(max-width:620px){.readout{grid-template-columns:1fr}}
+  .metric{background:var(--panel); padding:13px 14px}
+  .metric .n{font-family:var(--mono); font-size:1.4rem; font-weight:600; line-height:1}
+  .metric .l{font-size:.76rem; color:var(--ink-soft); margin-top:5px}
+  .metric.good .n{color:var(--allow)} .metric.bad .n{color:var(--block)}
+
+  /* org picker + budget */
+  .orgpick{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:14px 0}
+  @media(max-width:700px){.orgpick{grid-template-columns:1fr}}
+  .orgcard{border:1px solid var(--rule-firm); border-radius:3px; background:var(--panel); padding:14px; cursor:pointer}
+  .orgcard:hover{background:#fff}
+  .orgcard.sel{background:#fff; box-shadow:inset 0 0 0 2px var(--ink)}
+  .orgcard h3{margin:0 0 4px}
+  .orgcard p{margin:0; font-size:.84rem; color:var(--ink-soft); font-family:var(--serif)}
+  .budget{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin:10px 0}
+  .budget .fig{font-family:var(--mono); font-size:1.15rem; font-weight:600}
+  .budget .fig.over{color:var(--block)}
+  .bbar{flex:1; min-width:160px; height:10px; background:var(--bench); border:1px solid var(--rule-firm); border-radius:5px; overflow:hidden}
+  .bbar > i{display:block; height:100%; width:0; background:var(--allow); transition:width .2s}
+  .bbar.over > i{background:var(--block)}
+
+  .check{border:1px solid var(--rule-firm); border-radius:3px; background:var(--panel); padding:16px 18px; margin:22px 0; max-width:64ch}
+  .check .cq{font-weight:600; margin-bottom:11px}
+  .opt{display:block; width:100%; text-align:left; border:1px solid var(--rule); background:#fff; border-radius:2px; padding:10px 13px; margin-bottom:8px; cursor:pointer; font-family:var(--sans); font-size:.95rem; color:var(--ink)}
+  .opt:hover{border-color:var(--rule-firm)}
+  .opt.correct{border-color:var(--allow); background:var(--allow-wash)}
+  .opt.wrong{border-color:var(--block); background:var(--block-wash)}
+  .opt:disabled{cursor:default}
+  .cfx{font-size:.9rem; font-family:var(--serif); margin-top:6px; display:none}
+  .cfx.show{display:block}
+  .cfx.ok{color:var(--allow)} .cfx.no{color:var(--block)}
+
+  textarea.copybox{width:100%; min-height:150px; font-family:var(--mono); font-size:.8rem; border:1px solid var(--rule-firm); border-radius:3px; padding:12px; background:#fff; color:var(--ink); resize:vertical; line-height:1.5}
+  .examq{border:1px solid var(--ink); border-radius:3px; padding:18px 20px; margin:22px 0; background:var(--panel)}
+  .examq .qtext{font-family:var(--serif); font-size:1.08rem; line-height:1.55}
+  .scaffold{font-size:.9rem; color:var(--ink-soft)}
+  .scaffold li{margin:.3em 0}
+  .toasthint{font-size:.85rem; color:var(--ink-faint); font-family:var(--serif); font-style:italic; min-height:1.2em}
+
+  /* diagram */
+  .diagram{width:100%; height:auto; display:block; margin:10px 0; max-width:620px}
+  .dgm-box{fill:#fff; stroke:var(--rule-firm); stroke-width:1.5}
+  .dgm-ring{stroke:var(--ink); stroke-width:1.5; fill:none}
+  .dgm-cap{font-family:var(--mono); font-size:11px; fill:var(--ink-soft)}
+  .dgm-ink{fill:var(--ink); font-family:var(--sans); font-size:13px; font-weight:600}
+
+  @media print{ header.bar{display:none} .nav{display:none} body{background:#fff} .screen{animation:none} }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-inner">
+    <div class="brand">The Security Bench <span>&nbsp;/&nbsp;measures &amp; threats</span></div>
+    <div class="spine" id="spine" aria-hidden="true"></div>
+    <div class="stepno" id="stepno"></div>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+<!-- ========== COVER ========== -->
+<section class="screen active cover" data-screen="cover">
+  <div class="kicker">Physical, hardware &amp; software security &middot; a 90-minute lesson</div>
+  <h1>The best lock in the building won't stop a phishing email.</h1>
+  <p class="lede">Every security measure is strong against something and useless against something else. Today you'll match real threats to the controls that actually stop them — and prove which expensive measures are the wrong tool for the job.</p>
+
+  <div class="glance">
+    <div class="gh">Lesson at a glance &middot; 90 minutes of activity</div>
+    <div class="grow"><div class="gt">0–12</div><div class="gd"><b>Three layers.</b> Sort real measures into physical, hardware and software.</div></div>
+    <div class="grow"><div class="gt">12–40</div><div class="gd"><b>Right measure, wrong threat.</b> Six incidents — decide what helps and what's useless.</div></div>
+    <div class="grow"><div class="gt">40–55</div><div class="gd"><b>No single control is enough.</b> Build a layered defence for a company facing three threats at once.</div></div>
+    <div class="grow"><div class="gt">55–75</div><div class="gd"><b>Right fit for the organisation.</b> Spend a real budget for one of three very different businesses.</div></div>
+    <div class="grow"><div class="gt">75–90</div><div class="gd"><b>Evaluate.</b> Cost versus effectiveness — an exam-style judgement with your own evidence.</div></div>
+  </div>
+
+  <div class="nav" style="border-top:none; padding-top:0; margin-top:8px">
+    <button class="btn" onclick="go(1)">Start the lesson</button>
+    <span class="note">No accounts, no installs.</span>
+  </div>
+  <p class="note" style="margin-top:16px">Companion lesson: <a href="index.html">the software bench — antivirus &amp; firewall</a>.</p>
+</section>
+
+<!-- ========== STAGE 1: THREE LAYERS ========== -->
+<section class="screen" data-screen="layers">
+  <div class="kicker"><b>Stage 1</b> &middot; the three layers</div>
+  <h2>Where does protection sit?</h2>
+  <div class="teach">
+    <p>Organisations defend data in three overlapping layers. <strong>Physical</strong> controls protect the building and the people in it. <strong>Hardware</strong> controls protect the devices and the data on them. <strong>Software</strong> controls protect the systems and the network. Most real security needs all three, because an attacker only has to find the gap.</p>
+  </div>
+
+  <svg class="diagram" viewBox="0 0 620 150" role="img" aria-label="Three nested layers of defence: physical controls around the building, hardware controls around the devices, and software controls around the data.">
+    <rect class="dgm-box" x="12" y="20" width="596" height="112" rx="4"/>
+    <text class="dgm-cap" x="24" y="40">PHYSICAL — the building</text>
+    <rect class="dgm-box" x="150" y="48" width="458" height="76" rx="3"/>
+    <text class="dgm-cap" x="162" y="66">HARDWARE — the devices</text>
+    <rect class="dgm-box" x="330" y="72" width="278" height="40" rx="2"/>
+    <text class="dgm-ink" x="470" y="97" text-anchor="middle">the data</text>
+  </svg>
+
+  <div class="teach"><p>Sort each measure into the layer it mostly belongs to. Some genuinely straddle two — pick the best fit, and read why afterwards.</p></div>
+
+  <div class="panel">
+    <div class="panel-h">Where does each belong? <span class="tag" id="assign-count">0 of 8 placed</span></div>
+    <div class="panel-b"><div class="assign" id="assign-list"></div>
+      <div style="margin-top:14px; display:flex; gap:10px; align-items:center">
+        <button class="btn" id="assign-check" disabled>Check my answers</button>
+        <span class="toasthint" id="assign-hint"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(0)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" id="layers-next" disabled onclick="go(2)">Next: match threats to measures</button>
+  </div>
+</section>
+
+<!-- ========== STAGE 2: RIGHT MEASURE, WRONG THREAT ========== -->
+<section class="screen" data-screen="threats">
+  <div class="kicker"><b>Stage 2</b> &middot; right measure, wrong threat</div>
+  <h2>Six incidents. What actually helps?</h2>
+  <div class="teach">
+    <p>For each incident, decide whether each measure would genuinely <strong>help</strong> against that specific threat, or whether it's the <strong>wrong tool</strong> — however good it is at its own job. Mark every option, then reveal the verdict. Watch for the expensive controls that do nothing here.</p>
+  </div>
+
+  <div id="threat-area"></div>
+
+  <div class="panel inset" id="threat-score" style="display:none; margin-top:18px">
+    <div class="panel-b"><p class="tally" id="threat-tally"></p></div>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(1)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" id="threats-next" disabled onclick="go(3)">Next: build a layered defence</button>
+  </div>
+</section>
+
+<!-- ========== STAGE 3: LAYERING ========== -->
+<section class="screen" data-screen="layering">
+  <div class="kicker"><b>Stage 3</b> &middot; no single control is enough</div>
+  <h2>One company, three threats at once</h2>
+  <div class="teach">
+    <p>A 30-person company is worried about three things this year: staff falling for <strong>phishing</strong>, a possible <strong>ransomware</strong> infection, and an <strong>out-of-hours break-in</strong> to steal equipment. No single measure covers all three. Choose a set that covers each threat at least once — and notice how a good answer spans all three layers.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-h">Choose your defences <span class="tag">tick what you'd put in place</span></div>
+    <div class="panel-b">
+      <div class="mlist" id="layer-list"></div>
+      <div style="margin-top:14px"><button class="btn" id="layer-check">Check my coverage</button></div>
+    </div>
+  </div>
+
+  <div class="readout" id="layer-read" style="display:none">
+    <div class="metric" id="layer-m-ph"><div class="n">—</div><div class="l">Phishing</div></div>
+    <div class="metric" id="layer-m-rw"><div class="n">—</div><div class="l">Ransomware</div></div>
+    <div class="metric" id="layer-m-bi"><div class="n">—</div><div class="l">Break-in</div></div>
+  </div>
+  <div class="callout" id="layer-after" style="display:none"><div class="ch">What the coverage shows</div><p id="layer-after-txt"></p></div>
+
+  <div class="nav">
+    <button class="link" onclick="go(2)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" id="layering-next" disabled onclick="go(4)">Next: fit it to a real business</button>
+  </div>
+</section>
+
+<!-- ========== STAGE 4: CONTEXT / RECOMMENDATION ========== -->
+<section class="screen" data-screen="context">
+  <div class="kicker"><b>Stage 4</b> &middot; right fit for the organisation</div>
+  <h2>Same shop, different customers</h2>
+  <div class="teach">
+    <p>The right choice depends entirely on the organisation. Pick one, read what it has to protect and what it can spend, then assemble your recommendation. You're judged on whether you cover its real threats — not on how much you spend.</p>
+  </div>
+
+  <div class="orgpick" id="orgpick"></div>
+
+  <div id="context-work" style="display:none">
+    <div class="panel" style="margin-top:6px">
+      <div class="panel-h"><span id="org-title"></span> <span class="tag" id="org-budget-tag"></span></div>
+      <div class="panel-b">
+        <div class="teach" style="margin-top:0"><p id="org-brief" style="margin-bottom:12px"></p></div>
+        <div class="budget">
+          <span class="fig" id="spend">£0</span>
+          <div class="bbar" id="bbar"><i></i></div>
+          <span class="note" id="budget-left"></span>
+        </div>
+        <div class="mlist" id="ctx-list" style="margin-top:10px"></div>
+        <div style="margin-top:14px; display:flex; gap:10px; align-items:center">
+          <button class="btn" id="ctx-check">Check my recommendation</button>
+          <span class="toasthint" id="ctx-hint"></span>
+        </div>
+      </div>
+    </div>
+    <div class="callout" id="ctx-after" style="display:none"><div class="ch">How your recommendation holds up</div><p id="ctx-after-txt"></p></div>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(3)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" id="context-next" disabled onclick="go(5)">Finish: evaluate</button>
+  </div>
+</section>
+
+<!-- ========== STAGE 5: EVALUATION ========== -->
+<section class="screen" data-screen="eval">
+  <div class="kicker">Evaluation &middot; cost versus effectiveness</div>
+  <h2>So what's worth the money?</h2>
+  <div class="teach">
+    <p>You've now seen that the most expensive measure is worthless against the wrong threat, that no single control is enough, and that the right mix changes with the organisation. Use that to make a judgement.</p>
+  </div>
+
+  <div class="panel inset"><div class="panel-b"><p class="tally" id="eval-recap"></p></div></div>
+
+  <div class="examq">
+    <h3>Exam-style evaluation</h3>
+    <p class="qtext">An organisation has a limited budget and wants to protect sensitive customer data. Evaluate the extent to which it should prioritise physical security measures over hardware and software measures. Refer to specific threats, compare the measures, and reach a justified recommendation.</p>
+    <p class="scaffold" style="margin-top:12px">A strong answer will:</p>
+    <ul class="scaffold">
+      <li>show that each measure only counters certain threats, with examples from today's incidents;</li>
+      <li>weigh cost against effectiveness — an expensive control that misses the real threat is poor value;</li>
+      <li>argue for a layered mix across physical, hardware and software rather than one category;</li>
+      <li>tie the recommendation to the organisation's actual data, threats and budget.</li>
+    </ul>
+  </div>
+
+  <div class="teach"><h3>Your evidence, ready to quote</h3><p>Copy or save what you worked out, so your written judgement rests on your own findings.</p></div>
+  <textarea class="copybox" id="evidence" readonly></textarea>
+  <div style="margin-top:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+    <button class="btn small" id="copy-ev">Copy my evidence</button>
+    <button class="btn small ghost" id="dl-ev">Download as .txt</button>
+    <button class="btn small ghost" id="print-ev">Print this page</button>
+    <span class="toasthint" id="copy-hint"></span>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(4)">Back</button>
+    <div class="spacer"></div>
+    <a class="link" href="index.html">Software bench lesson</a>
+    <button class="btn ghost" onclick="go(0)">Back to the start</button>
+  </div>
+</section>
+
+</div>
+</main>
+
+<script>
+"use strict";
+const SCREENS=["cover","layers","threats","layering","context","eval"];
+const LABELS=["","Three layers","Threats","Layering","Context","Evaluate"];
+let maxReached=0;
+function go(i){
+  if(i<0||i>=SCREENS.length)return;
+  maxReached=Math.max(maxReached,i);
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.querySelector('[data-screen="'+SCREENS[i]+'"]').classList.add("active");
+  window.scrollTo({top:0});
+  spine(i);
+  if(SCREENS[i]==="eval") buildEvidence();
+}
+window.go=go;
+function spine(i){
+  const s=document.getElementById("spine"); s.innerHTML="";
+  for(let k=1;k<SCREENS.length;k++){const d=document.createElement("div"); d.className="seg"+(k<=i?" on":""); s.appendChild(d);}
+  document.getElementById("stepno").textContent=LABELS[i];
+}
+
+/* ---------- master measures ---------- */
+const M={
+  cctv:{n:"CCTV cameras",cat:"P",cost:3500},
+  guard:{n:"Security guard",cat:"P",cost:9000},
+  biometric:{n:"Biometric server-room door",cat:"P",cost:5500},
+  cards:{n:"Access-card doors",cat:"P",cost:3000},
+  alarm:{n:"Intruder alarm",cat:"P",cost:2000},
+  rack:{n:"Lockable server rack",cat:"H",cost:1500},
+  encrypt:{n:"Device encryption",cat:"H",cost:1200},
+  antivirus:{n:"Antivirus / endpoint protection",cat:"S",cost:4000},
+  firewall:{n:"Managed firewall",cat:"S",cost:5000},
+  backup:{n:"Offline backups",cat:"S",cost:4000},
+  mfa:{n:"Multi-factor login (MFA)",cat:"S",cost:1500},
+  training:{n:"Staff security training",cat:"S",cost:2000},
+  usb:{n:"USB / device control",cat:"S",cost:1800},
+  accesslog:{n:"Access logging & monitoring",cat:"S",cost:2500}
+};
+const CATNAME={P:"Physical",H:"Hardware",S:"Software & admin"};
+const money=n=>"£"+n.toLocaleString();
+
+/* ---------- STAGE 1: classify ---------- */
+const CLASSIFY=[
+  {k:"cctv", why:"A physical control — it watches the building. (It records more than it prevents.)"},
+  {k:"rack", why:"Hardware — a physical lock on the server equipment itself."},
+  {k:"antivirus", why:"Software — it inspects files and activity on devices."},
+  {k:"biometric", why:"Physical access control — it decides who may enter a room."},
+  {k:"firewall", why:"Grouped with software here, though firewalls come as hardware or software; it controls network connections."},
+  {k:"encrypt", why:"Hardware/software on the device — it protects the data stored on it."},
+  {k:"training", why:"An administrative/software-layer control — it changes how people behave."},
+  {k:"backup", why:"A software/hardware control — it keeps a recoverable copy of the data."}
+];
+let assigned={};
+function buildAssign(){
+  const c=document.getElementById("assign-list"); c.innerHTML="";
+  CLASSIFY.forEach((item,i)=>{
+    const row=document.createElement("div"); row.className="arow"; row.dataset.k=item.k;
+    row.innerHTML='<div class="top"><span class="m">'+M[item.k].n+'</span><div class="abtns">'+
+      ['P','H','S'].map(cat=>'<button class="catb" data-cat="'+cat+'">'+CATNAME[cat]+'</button>').join('')+
+      '</div></div><div class="fb"></div>';
+    row.querySelectorAll(".catb").forEach(b=>b.addEventListener("click",()=>{
+      assigned[item.k]=b.dataset.cat;
+      row.querySelectorAll(".catb").forEach(x=>x.classList.toggle("sel",x===b));
+      const n=Object.keys(assigned).length;
+      document.getElementById("assign-count").textContent=n+" of 8 placed";
+      document.getElementById("assign-check").disabled = n<CLASSIFY.length;
+    }));
+    c.appendChild(row);
+  });
+}
+document.addEventListener("DOMContentLoaded",()=>{
+  spine(0);
+  buildAssign();
+  document.getElementById("assign-check").addEventListener("click",()=>{
+    let correct=0;
+    document.querySelectorAll("#assign-list .arow").forEach(row=>{
+      const k=row.dataset.k, item=CLASSIFY.find(x=>x.k===k);
+      const ok=assigned[k]===M[k].cat;
+      row.classList.add("graded"); row.classList.toggle("correct",ok); row.classList.toggle("incorrect",!ok);
+      if(ok)correct++;
+      row.querySelector(".fb").innerHTML=(ok?'<span class="outcome ok">Correct</span> ':'<span class="outcome no">Best fit: '+CATNAME[M[k].cat]+'</span> ')+item.why;
+    });
+    document.getElementById("assign-hint").textContent=correct+" of "+CLASSIFY.length+" placed in the best layer.";
+    document.getElementById("layers-next").disabled=false;
+  });
+  buildThreats();
+  buildLayerList();
+  buildOrgs();
+  wireEval();
+});
+
+/* ---------- STAGE 2: threats ---------- */
+const THREATS=[
+  {t:"Ransomware encrypts the file server", tag:"software threat",
+   cands:[
+     {k:"antivirus",help:true,why:"Can detect and stop the malware before it runs."},
+     {k:"backup",help:true,why:"An offline copy lets you recover without paying the ransom."},
+     {k:"training",help:true,why:"Most ransomware starts with a staff member opening something they shouldn't."},
+     {k:"cctv",help:false,why:"A camera can't touch code that's already running on the network."},
+     {k:"biometric",help:false,why:"Controlling who enters the room does nothing to malware already inside."}
+   ]},
+  {t:"A stranger follows staff through the door and plugs in a USB", tag:"physical + insider",
+   cands:[
+     {k:"guard",help:true,why:"A guard challenges people without ID at the door."},
+     {k:"training",help:true,why:"Staff who challenge tailgaters stop this before it starts."},
+     {k:"usb",help:true,why:"Device control blocks or logs what the USB can do."},
+     {k:"cctv",help:false,why:"It records the incident but doesn't prevent it — useful only afterwards."},
+     {k:"firewall",help:false,why:"This isn't a network connection; the firewall never sees it."}
+   ]},
+  {t:"A laptop full of customer data is stolen from a café", tag:"device loss",
+   cands:[
+     {k:"encrypt",help:true,why:"Encryption keeps the data unreadable to whoever took it."},
+     {k:"backup",help:true,why:"You still have the data even though the device is gone."},
+     {k:"mfa",help:true,why:"The thief can't log into company systems with the laptop alone."},
+     {k:"cctv",help:false,why:"Your office cameras can't see a café across town."},
+     {k:"rack",help:false,why:"A server-room lock has nothing to do with a laptop out in the world."}
+   ]},
+  {t:"A phishing email tricks staff into typing their password into a fake site", tag:"social engineering",
+   cands:[
+     {k:"training",help:true,why:"Spotting the fake is the single most effective defence."},
+     {k:"mfa",help:true,why:"The stolen password alone won't get the attacker in."},
+     {k:"antivirus",help:false,why:"There's no malware to catch — it's a convincing web page."},
+     {k:"firewall",help:false,why:"The connection looks like ordinary web traffic to the firewall."},
+     {k:"biometric",help:false,why:"A door lock is irrelevant to a password typed online."}
+   ]},
+  {t:"Thieves break into the office at night to steal the servers", tag:"physical theft",
+   cands:[
+     {k:"alarm",help:true,why:"Detects the break-in and raises the alert out of hours."},
+     {k:"rack",help:true,why:"A locked rack makes grabbing the servers much harder."},
+     {k:"guard",help:true,why:"A person on site can deter and respond."},
+     {k:"cctv",help:true,why:"Visible cameras deter, and footage identifies the culprits."},
+     {k:"antivirus",help:false,why:"Software can't stop someone physically carrying hardware out."}
+   ]},
+  {t:"A trusted employee copies the customer database to a USB stick", tag:"the insider",
+   cands:[
+     {k:"accesslog",help:true,why:"Monitoring shows who accessed the data and when."},
+     {k:"usb",help:true,why:"Device control blocks or restricts copying to removable drives."},
+     {k:"biometric",help:false,why:"They're allowed in — the door opened for them legitimately."},
+     {k:"firewall",help:false,why:"They're inside and authorised; the perimeter never gets a say."},
+     {k:"guard",help:false,why:"A guard waves through someone who works there."}
+   ]}
+];
+let threatMarks={}; // id -> {candIdx:'y'|'n'}
+let threatRevealed={};
+function buildThreats(){
+  const area=document.getElementById("threat-area"); area.innerHTML="";
+  THREATS.forEach((th,ti)=>{
+    threatMarks[ti]={};
+    const card=document.createElement("div"); card.className="threatcard";
+    let cands=th.cands.map((cd,ci)=>
+      '<div class="cand" data-ti="'+ti+'" data-ci="'+ci+'">'+
+        '<div class="cname">'+M[cd.k].n+'</div>'+
+        '<div class="cand-btns"><button class="hbtn" data-v="y">Helps</button>'+
+        '<button class="hbtn" data-v="n">Wrong tool</button></div>'+
+        '<div class="verdict"></div></div>').join("");
+    card.innerHTML='<div class="th"><h3>'+(ti+1)+'. '+th.t+'</h3><span class="cat">'+th.tag+'</span></div>'+
+      '<div class="tb">'+cands+
+      '<div style="margin-top:12px; display:flex; gap:10px; align-items:center">'+
+      '<button class="btn small" data-reveal="'+ti+'" disabled>Reveal verdicts</button>'+
+      '<span class="toasthint" data-hint="'+ti+'"></span></div></div>';
+    area.appendChild(card);
+    card.querySelectorAll(".hbtn").forEach(b=>b.addEventListener("click",()=>{
+      const cand=b.closest(".cand"), ci=cand.dataset.ci, v=b.dataset.v;
+      threatMarks[ti][ci]=v;
+      cand.querySelectorAll(".hbtn").forEach(x=>{x.classList.remove("on-y","on-n"); if(x===b)x.classList.add(v==="y"?"on-y":"on-n");});
+      card.querySelector('[data-reveal="'+ti+'"]').disabled = Object.keys(threatMarks[ti]).length < th.cands.length;
+    }));
+    card.querySelector('[data-reveal="'+ti+'"]').addEventListener("click",()=>revealThreat(ti,card));
+  });
+}
+function revealThreat(ti,card){
+  const th=THREATS[ti]; let right=0;
+  card.querySelectorAll(".cand").forEach(cand=>{
+    const ci=cand.dataset.ci, cd=th.cands[ci];
+    const mark=threatMarks[ti][ci];
+    const correct=(mark==="y")===cd.help;
+    cand.classList.add("revealed"); cand.classList.toggle("right",correct); cand.classList.toggle("wrong",!correct);
+    const verdict = cd.help? '<span class="outcome ok">Helps</span>' : '<span class="outcome no">Wrong tool here</span>';
+    cand.querySelector(".verdict").innerHTML=verdict+(correct?' &nbsp;<span class="note">your call was right</span>':' &nbsp;<span class="note">you said '+(mark==="y"?"helps":"wrong tool")+'</span>')+
+      '<div class="vwhy">'+cd.why+'</div>';
+    if(correct)right++;
+  });
+  threatRevealed[ti]=right;
+  card.querySelector('[data-hint="'+ti+'"]').textContent=right+" of "+th.cands.length+" right.";
+  const done=Object.keys(threatRevealed).length;
+  if(done===THREATS.length){
+    let tot=0,max=0; THREATS.forEach((t,i)=>{tot+=(threatRevealed[i]||0); max+=t.cands.length;});
+    document.getElementById("threat-score").style.display="block";
+    document.getElementById("threat-tally").innerHTML="Across all six incidents you judged <b>"+tot+" of "+max+"</b> measures correctly. The pattern to take away: a control's price tells you nothing about whether it fits the threat.";
+    document.getElementById("threats-next").disabled=false;
+  }
+}
+
+/* ---------- STAGE 3: layering ---------- */
+const LAYER_POOL=["training","mfa","antivirus","backup","firewall","alarm","rack","guard","cctv","encrypt","usb","accesslog"];
+const COVER={
+  phishing:["training","mfa"],
+  ransomware:["antivirus","backup","training"],
+  breakin:["alarm","rack","guard","cctv"]
+};
+let layerSel=new Set();
+function buildLayerList(){
+  const c=document.getElementById("layer-list"); c.innerHTML="";
+  LAYER_POOL.forEach(k=>{
+    const lab=document.createElement("label"); lab.className="mtog";
+    lab.innerHTML='<input type="checkbox"><span><span class="mn">'+M[k].n+'</span><br><span class="mc">'+CATNAME[M[k].cat]+'</span></span>';
+    lab.querySelector("input").addEventListener("change",e=>{
+      if(e.target.checked)layerSel.add(k); else layerSel.delete(k);
+      lab.classList.toggle("sel",e.target.checked);
+    });
+    c.appendChild(lab);
+  });
+}
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("layer-check").addEventListener("click",()=>{
+    const res={}; let covered=0;
+    for(const threat in COVER){
+      const hit=COVER[threat].some(k=>layerSel.has(k));
+      res[threat]=hit; if(hit)covered++;
+    }
+    const map={phishing:"layer-m-ph",ransomware:"layer-m-rw",breakin:"layer-m-bi"};
+    for(const threat in map){
+      const el=document.getElementById(map[threat]);
+      el.classList.remove("good","bad"); el.classList.add(res[threat]?"good":"bad");
+      el.querySelector(".n").textContent=res[threat]?"covered":"exposed";
+    }
+    document.getElementById("layer-read").style.display="grid";
+    const after=document.getElementById("layer-after"), txt=document.getElementById("layer-after-txt");
+    after.style.display="block";
+    const cats=new Set([...layerSel].map(k=>M[k].cat));
+    if(covered===3 && cats.size>=2)
+      txt.textContent="All three threats covered, using more than one layer. That's the point: a single category can't do it — phishing is beaten by people and logins, ransomware by software and backups, a break-in by physical controls.";
+    else if(covered===3)
+      txt.textContent="All three covered — but look how narrow your set is. In a real year an attacker tries whichever door you left shut, so spreading across physical, hardware and software is safer than stacking one layer.";
+    else
+      txt.textContent="You've left "+(3-covered)+" threat(s) exposed. Each threat needs at least one measure that actually counters it — go back and find the gap.";
+    document.getElementById("layering-next").disabled=false;
+  });
+});
+
+/* ---------- STAGE 4: context ---------- */
+const ORGS={
+  gp:{title:"A GP surgery",budget:12000,
+    brief:"Holds confidential patient records. Biggest worries: a ransomware attack locking the records, data stolen if a device goes missing, and unauthorised access to the records room. Small team, not very technical.",
+    need:["backup","antivirus","encrypt","training","cards","mfa"],
+    waste:["guard","biometric"],
+    needWhy:"patient data must survive ransomware (backups, antivirus), stay unreadable if a device is lost (encryption), and be limited to the right staff (access cards, MFA), with people trained to handle it."},
+  shop:{title:"An online shop (startup)",budget:12000,
+    brief:"Takes customer orders and card details through its website. Biggest worries: web/network attacks, account takeover, and losing customer data. Works largely from laptops; no physical server room.",
+    need:["firewall","mfa","antivirus","backup","encrypt","training"],
+    waste:["guard","biometric","cards","alarm"],
+    needWhy:"an internet-facing business needs network defence (firewall), protection against stolen logins (MFA), malware defence and recovery (antivirus, backups), and unreadable data on laptops (encryption). Physical building controls do little here."},
+  school:{title:"A secondary school",budget:12000,
+    brief:"Hundreds of student accounts and personal records, many non-expert users, and equipment that gets moved around and occasionally stolen. Biggest worries: untrained users, device theft, and data getting copied around.",
+    need:["training","antivirus","backup","encrypt","cards","usb"],
+    waste:["guard","biometric"],
+    needWhy:"lots of inexperienced users make training and malware defence essential; movable kit needs encryption; records need controlled access and limits on copying data to USB."}
+};
+let ctxOrg=null, ctxSel=new Set();
+function buildOrgs(){
+  const c=document.getElementById("orgpick"); c.innerHTML="";
+  for(const key in ORGS){
+    const o=ORGS[key];
+    const card=document.createElement("div"); card.className="orgcard"; card.dataset.key=key;
+    card.innerHTML='<h3>'+o.title+'</h3><p>'+money(o.budget)+' to spend</p>';
+    card.addEventListener("click",()=>selectOrg(key));
+    c.appendChild(card);
+  }
+}
+function selectOrg(key){
+  ctxOrg=key; ctxSel=new Set();
+  document.querySelectorAll(".orgcard").forEach(c=>c.classList.toggle("sel",c.dataset.key===key));
+  const o=ORGS[key];
+  document.getElementById("context-work").style.display="block";
+  document.getElementById("org-title").textContent=o.title;
+  document.getElementById("org-budget-tag").textContent=money(o.budget)+" budget";
+  document.getElementById("org-brief").textContent=o.brief;
+  document.getElementById("ctx-after").style.display="none";
+  const c=document.getElementById("ctx-list"); c.innerHTML="";
+  Object.keys(M).forEach(k=>{
+    const lab=document.createElement("label"); lab.className="mtog";
+    lab.innerHTML='<input type="checkbox"><span><span class="mn">'+M[k].n+'</span><br><span class="mc">'+CATNAME[M[k].cat]+' · '+money(M[k].cost)+'</span></span>';
+    lab.querySelector("input").addEventListener("change",e=>{
+      if(e.target.checked)ctxSel.add(k); else ctxSel.delete(k);
+      lab.classList.toggle("sel",e.target.checked); updateBudget();
+    });
+    c.appendChild(lab);
+  });
+  updateBudget();
+}
+function spend(){ let s=0; ctxSel.forEach(k=>s+=M[k].cost); return s; }
+function updateBudget(){
+  if(!ctxOrg)return;
+  const o=ORGS[ctxOrg], s=spend(), over=s>o.budget;
+  document.getElementById("spend").textContent=money(s);
+  document.getElementById("spend").classList.toggle("over",over);
+  const bar=document.getElementById("bbar"); bar.classList.toggle("over",over);
+  bar.querySelector("i").style.width=Math.min(100,s/o.budget*100)+"%";
+  document.getElementById("budget-left").textContent = over? ("over by "+money(s-o.budget)) : (money(o.budget-s)+" left");
+}
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("ctx-check").addEventListener("click",()=>{
+    if(!ctxOrg)return;
+    const o=ORGS[ctxOrg], s=spend();
+    const covered=o.need.filter(k=>ctxSel.has(k));
+    const missed=o.need.filter(k=>!ctxSel.has(k));
+    const wasted=[...ctxSel].filter(k=>o.waste.includes(k));
+    const after=document.getElementById("ctx-after"), txt=document.getElementById("ctx-after-txt");
+    after.style.display="block";
+    let msg="";
+    if(s>o.budget) msg+="You're "+money(s-o.budget)+" over budget — a recommendation has to be affordable. ";
+    msg+="You covered "+covered.length+" of "+o.need.length+" of this organisation's key needs. ";
+    if(missed.length) msg+="Still exposed: "+missed.map(k=>M[k].n.toLowerCase()).join(", ")+". ";
+    if(wasted.length) msg+="Spent on controls that don't fit here: "+wasted.map(k=>M[k].n.toLowerCase()).join(", ")+". ";
+    msg+="For this organisation, "+o.needWhy;
+    txt.textContent=msg;
+    document.getElementById("ctx-hint").textContent="Recommendation checked.";
+    document.getElementById("context-next").disabled=false;
+  });
+});
+
+/* ---------- STAGE 5: evidence ---------- */
+function threatSummary(){
+  let tot=0,max=0; THREATS.forEach((t,i)=>{tot+=(threatRevealed[i]||0); max+=t.cands.length;});
+  return Object.keys(threatRevealed).length? (tot+" of "+max+" measure-judgements correct") : "not completed";
+}
+function buildEvidence(){
+  let recap="Right measure, wrong threat: "+threatSummary()+". ";
+  if(ctxOrg){ const o=ORGS[ctxOrg]; const cov=o.need.filter(k=>ctxSel.has(k)).length;
+    recap+="Recommendation for "+o.title.toLowerCase()+": "+money(spend())+" of "+money(o.budget)+" spent, covering "+cov+" of "+o.need.length+" key needs.";
+  } else recap+="Context recommendation: not completed.";
+  document.getElementById("eval-recap").innerHTML=recap;
+
+  let lines="SECURITY MEASURES — STUDENT EVIDENCE\n\n";
+  lines+="RIGHT MEASURE, WRONG THREAT\n";
+  THREATS.forEach((t,i)=>{
+    const help=t.cands.filter(c=>c.help).map(c=>M[c.k].n).join(", ");
+    const useless=t.cands.filter(c=>!c.help).map(c=>M[c.k].n).join(", ");
+    lines+=(i+1)+". "+t.t+"\n   Helps: "+help+"\n   Wrong tool: "+useless+"\n";
+  });
+  lines+="   My score: "+threatSummary()+"\n\n";
+  lines+="LAYERING (phishing + ransomware + break-in)\n";
+  lines+="   Chosen: "+([...layerSel].map(k=>M[k].n).join(", ")||"none")+"\n";
+  lines+="   Point: no single category covers all three; a good answer spans physical, hardware and software.\n\n";
+  if(ctxOrg){ const o=ORGS[ctxOrg];
+    lines+="RECOMMENDATION — "+o.title+" ("+money(o.budget)+")\n";
+    lines+="   Chosen: "+([...ctxSel].map(k=>M[k].n+" ("+money(M[k].cost)+")").join(", ")||"none")+"\n";
+    lines+="   Total: "+money(spend())+"\n";
+    lines+="   Key needs covered: "+o.need.filter(k=>ctxSel.has(k)).length+" of "+o.need.length+"\n\n";
+  }
+  lines+="JUDGEMENT (cost vs effectiveness)\n";
+  lines+="Each measure only counters certain threats, so the most expensive control is poor value against the wrong threat. No single layer is enough; the right answer is a mix of physical, hardware and software chosen to fit the organisation's actual data, threats and budget.";
+  document.getElementById("evidence").value=lines;
+}
+function wireEval(){
+  document.getElementById("copy-ev").addEventListener("click",()=>{
+    const ta=document.getElementById("evidence"); ta.select(); let ok=false;
+    try{ if(navigator.clipboard){navigator.clipboard.writeText(ta.value); ok=true;} }catch(e){}
+    if(!ok){ try{document.execCommand("copy"); ok=true;}catch(e){} }
+    document.getElementById("copy-hint").textContent=ok?"Copied. Paste it into your written answer.":"Select the text above and copy it.";
+  });
+  document.getElementById("dl-ev").addEventListener("click",()=>{
+    let ok=false;
+    try{ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([document.getElementById("evidence").value],{type:"text/plain"}));
+      a.download="security-measures-evidence.txt"; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),600); ok=true; }catch(e){}
+    document.getElementById("copy-hint").textContent=ok?"Saved security-measures-evidence.txt to your downloads.":"Couldn't save here — use copy instead.";
+  });
+  document.getElementById("print-ev").addEventListener("click",()=>window.print());
+}
+</script>
+</body>
+</html>

@@ -108,6 +108,8 @@
   .nav .spacer{flex:1}
   .link{background:none; border:none; color:var(--ink-soft); font-family:var(--sans); font-size:.92rem; cursor:pointer; text-decoration:underline; text-underline-offset:3px; padding:6px}
   .link:hover{color:var(--ink)}
+  a{color:var(--ink); text-decoration:underline; text-underline-offset:3px}
+  a:hover{color:var(--allow)}
 
   /* ---------- bench layout ---------- */
   .bench{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:22px 0; align-items:start}
@@ -250,6 +252,27 @@
   .legend b{font-weight:600}
   .swatch{display:inline-block; width:10px; height:10px; border-radius:2px; vertical-align:middle; margin-right:4px}
 
+  /* ---------- custom diagrams ---------- */
+  .diagram{width:100%; height:auto; display:block; margin:8px 0 4px; max-width:640px}
+  .dgm-box{fill:#fff; stroke:var(--rule-firm); stroke-width:1.5}
+  .dgm-gate{fill:var(--bench); stroke:var(--ink); stroke-width:1.5}
+  .dgm-brick{stroke:var(--rule-firm); stroke-width:1}
+  .dgm-cap{font-family:var(--mono); font-size:11px; fill:var(--ink-soft)}
+  .dgm-mini{font-family:var(--mono); font-size:11px; fill:var(--ink-soft)}
+  .dgm-allow{stroke:var(--allow); stroke-width:2.5; fill:none}
+  .dgm-allow-fill{fill:var(--allow)}
+  .dgm-allowt{fill:var(--allow); font-family:var(--mono); font-size:11px}
+  .dgm-block{stroke:var(--block); stroke-width:2.5; fill:none}
+  .dgm-blockt{fill:var(--block); font-family:var(--mono); font-size:11px}
+  .dgm-fold{fill:var(--bench); stroke:var(--rule-firm); stroke-width:1}
+  .dgm-arrow{stroke:var(--ink-soft); stroke-width:1.5}
+  .dgm-inkfill{fill:var(--ink-soft)}
+  .dgm-ring{stroke:var(--ink); stroke-width:2; fill:none}
+  .dgm-stamp-ok{fill:none; stroke:var(--allow); stroke-width:2}
+  .dgm-oktext{fill:var(--allow); font-family:var(--sans); font-weight:700; font-size:12px; letter-spacing:.06em}
+  .dgm-stamp-no{fill:none; stroke:var(--block); stroke-width:2}
+  .dgm-notext{fill:var(--block); font-family:var(--sans); font-weight:700; font-size:12px; letter-spacing:.06em}
+
   @media print{
     header.bar{display:none}
     .nav{display:none}
@@ -257,7 +280,7 @@
     .screen{animation:none}
     textarea.copybox{min-height:auto; border-color:var(--rule)}
   }
- .mini-field{display:flex;flex-direction:column;gap:5px;min-width:130px;color:var(--ink-soft);font-size:.75rem}.mini-field select{max-width:175px}.rulebuilder{align-items:end}.rulebuilder>select{align-self:end}.rrow .rtxt{overflow-wrap:anywhere}@media(max-width:620px){.mini-field{min-width:calc(50% - 8px);flex:1}.mini-field select{max-width:none}} </style>
+</style>
 </head>
 <body>
 
@@ -276,7 +299,7 @@
 <section class="screen active cover" data-screen="cover" data-part="intro">
   <div class="kicker">A hands-on lesson &middot; no prior knowledge needed</div>
   <h1><span class="q">Trust is conditional.</span></h1>
-  <p class="lede">Two security tools, two different jobs. Investigate their evidence, build rules you can justify, and find out which threats your defences still miss.</p>
+  <p class="lede">Every antivirus and every firewall quietly decides what to let through. Over the next hour you'll build both, test your own decisions, and find out exactly what they wave past.</p>
 
   <div class="demo" aria-hidden="true">
     <div class="demo-row">
@@ -302,6 +325,7 @@
     <button class="btn" onclick="go(1)">Open the bench</button>
     <span class="note">Works in the browser. Nothing is installed and no real files are scanned.</span>
   </div>
+  <p class="note" style="margin-top:16px">Companion lesson: <a href="measures.html">physical, hardware &amp; software measures</a>.</p>
 </section>
 
 <!-- ======================= ORIENTATION ======================= -->
@@ -316,13 +340,13 @@
     <div class="panel">
       <div class="panel-h">Antivirus <span class="tag">examines files</span></div>
       <div class="panel-b teach">
-        <p style="margin-bottom:0">Antivirus software scans files and observes activity on a device. It may inspect downloads, attachments, processes and changes to files, and decide whether to alert or quarantine. Its question is: <em>"is this thing dangerous?"</em></p>
+        <p style="margin-bottom:0">An antivirus looks at <mark>files already on the computer</mark> — a download, an email attachment, a memory stick — and decides whether each one is safe to open. Its question is: <em>"is this thing dangerous?"</em></p>
       </div>
     </div>
     <div class="panel">
       <div class="panel-h">Firewall <span class="tag">examines traffic</span></div>
       <div class="panel-b teach">
-        <p style="margin-bottom:0">Firewalls can run on devices or at network boundaries. In this lab, the firewall examines addresses, protocols, ports and connection direction. Some real products can inspect application traffic too. Its question is: <em>"should this connection be allowed through?"</em></p>
+        <p style="margin-bottom:0">A firewall sits at the <mark>edge of the network</mark> and watches connections going in and out. It never opens a file. Its question is: <em>"should this connection be allowed through?"</em></p>
       </div>
     </div>
   </div>
@@ -347,9 +371,33 @@
   <div class="kicker"><b>Antivirus lab</b> &middot; stage 1 of 5</div>
   <h2>Catching malware by its fingerprint</h2>
   <div class="teach">
-    <p>Some known malware can be recognised using a <strong>signature</strong> — think of it as a fingerprint taken from the file's contents. An antivirus keeps a list of these fingerprints. When it scans a file, it checks: <em>does this file's fingerprint match anything on the wanted list?</em></p>
+    <p>Every known piece of malware has been seen before by security researchers, who record a short <strong>signature</strong> — think of it as a fingerprint taken from the file's contents. An antivirus keeps a list of these fingerprints. When it scans a file, it checks: <em>does this file's fingerprint match anything on the wanted list?</em></p>
     <p>Below is your detector. Right now it only knows how to do one thing: match fingerprints against its small database. Scan the files and see what it catches.</p>
   </div>
+
+  <svg class="diagram" viewBox="0 0 680 140" role="img" aria-label="Each file passes through your detector, which stamps it either clean or threat and explains why.">
+    <path class="dgm-box" d="M44 34 h46 l20 20 v54 h-66 z"/>
+    <path class="dgm-fold" d="M90 34 v20 h20 z"/>
+    <line class="dgm-brick" x1="56" y1="70" x2="98" y2="70"/>
+    <line class="dgm-brick" x1="56" y1="82" x2="98" y2="82"/>
+    <line class="dgm-brick" x1="56" y1="94" x2="86" y2="94"/>
+    <text class="dgm-cap" x="77" y="128" text-anchor="middle">a file</text>
+    <line class="dgm-arrow" x1="126" y1="80" x2="236" y2="80"/>
+    <polygon class="dgm-inkfill" points="236,80 224,74 224,86"/>
+    <rect class="dgm-box" x="250" y="46" width="170" height="68" rx="3"/>
+    <circle class="dgm-ring" cx="310" cy="80" r="18"/>
+    <line class="dgm-ring" x1="324" y1="94" x2="342" y2="112"/>
+    <text class="dgm-mini" x="356" y="76">rules</text>
+    <text class="dgm-mini" x="356" y="92">+ signs</text>
+    <text class="dgm-cap" x="335" y="128" text-anchor="middle">your detector</text>
+    <line class="dgm-arrow" x1="436" y1="80" x2="520" y2="80"/>
+    <polygon class="dgm-inkfill" points="520,80 508,74 508,86"/>
+    <rect class="dgm-stamp-ok" x="540" y="52" width="104" height="26" rx="3"/>
+    <text class="dgm-oktext" x="592" y="70" text-anchor="middle">CLEAN</text>
+    <rect class="dgm-stamp-no" x="540" y="86" width="104" height="26" rx="3"/>
+    <text class="dgm-notext" x="592" y="104" text-anchor="middle">THREAT</text>
+    <text class="dgm-cap" x="592" y="128" text-anchor="middle">verdict + reason</text>
+  </svg>
 
   <div class="panel inset" style="margin:14px 0">
     <div class="panel-h">Known-malware fingerprints <span class="tag">signature database</span></div>
@@ -371,7 +419,7 @@
 
   <div class="callout" id="av1-after" style="display:none">
     <div class="ch">What just happened</div>
-    <p>Exact matches can efficiently recognise known threats, although real-world signature detection can still make errors. But look at <code>invoice_update.exe</code> — clearly doing damage, yet it sailed through. Its fingerprint simply wasn't on the list. That's the weakness we'll attack next.</p>
+    <p>Fingerprint matching is fast and it never raises a false alarm on a file it recognises. But look at <code>invoice_update.exe</code> — clearly doing damage, yet it sailed through. Its fingerprint simply wasn't on the list. That's the weakness we'll attack next.</p>
   </div>
 
   <div class="nav">
@@ -570,6 +618,29 @@
     <p>It doesn't open files or remove viruses. It only controls which connections are permitted. The skill is deciding what to let through without accidentally blocking the things the business needs.</p>
   </div>
 
+  <svg class="diagram" viewBox="0 0 680 184" role="img" aria-label="A firewall sits between the staff computers and the internet. Outbound connections from staff pass through; inbound connections from outsiders are stopped at the firewall unless a rule allows them.">
+    <text class="dgm-cap" x="92" y="22" text-anchor="middle">staff computers</text>
+    <text class="dgm-cap" x="340" y="22" text-anchor="middle">firewall</text>
+    <text class="dgm-cap" x="588" y="22" text-anchor="middle">the internet</text>
+    <rect class="dgm-box" x="26" y="52" width="132" height="72" rx="3"/>
+    <rect class="dgm-box" x="46" y="68" width="40" height="30" rx="1"/>
+    <rect class="dgm-box" x="98" y="80" width="40" height="30" rx="1"/>
+    <rect class="dgm-box" x="522" y="52" width="132" height="72" rx="3"/>
+    <text class="dgm-cap" x="588" y="86" text-anchor="middle">websites,</text>
+    <text class="dgm-cap" x="588" y="104" text-anchor="middle">&amp; attackers</text>
+    <rect class="dgm-gate" x="320" y="38" width="40" height="110" rx="2"/>
+    <line class="dgm-brick" x1="320" y1="74" x2="360" y2="74"/>
+    <line class="dgm-brick" x1="320" y1="112" x2="360" y2="112"/>
+    <line class="dgm-brick" x1="340" y1="38" x2="340" y2="148"/>
+    <line class="dgm-allow" x1="162" y1="74" x2="512" y2="74"/>
+    <polygon class="dgm-allow-fill" points="514,74 502,68 502,80"/>
+    <text class="dgm-allowt" x="196" y="66">outbound &mdash; usually fine</text>
+    <line class="dgm-block" x1="512" y1="112" x2="374" y2="112"/>
+    <line class="dgm-block" x1="370" y1="105" x2="356" y2="119"/>
+    <line class="dgm-block" x1="356" y1="105" x2="370" y2="119"/>
+    <text class="dgm-blockt" x="408" y="104">inbound &mdash; stopped here</text>
+  </svg>
+
   <div class="check" id="chk-fw1">
     <div class="cq">What does a firewall actually decide?</div>
     <button class="opt" data-ok="1">Whether each network connection is allowed through or blocked.</button>
@@ -590,9 +661,9 @@
   <div class="kicker fw"><b>Firewall lab</b> &middot; stage 2 of 5</div>
   <h2>What the gate can actually see</h2>
   <div class="teach">
-    <p>Our teaching firewall uses connection metadata rather than inspecting content. Real firewalls vary: some check only network/transport information while others inspect applications and connection state. These fields determine the outcome in our model:</p>
-    <h3>The port — which service might this be?</h3>
-    <p>Services commonly use particular <strong>port numbers</strong>. A port offers a clue about the service, but it does not prove what a connection is doing. Tap each one to see what it's for.</p>
+    <p>A firewall can't read your emails or see inside a download. For each connection it only sees a few labels on the outside — and it has to decide from those alone. Three of them do most of the work:</p>
+    <h3>The port — which service is this?</h3>
+    <p>Every type of internet service has a numbered <strong>port</strong>, like a numbered door into the building. The number tells the firewall what <em>kind</em> of connection it is. Tap each one to see what it's for.</p>
   </div>
 
   <div class="fieldcards" id="portcards"></div>
@@ -625,7 +696,7 @@
   <h2>Write the rules, then watch the traffic</h2>
   <div class="teach">
     <p>A firewall is just an ordered list of <strong>rules</strong>. Each rule says: <em>for this kind of connection, allow or block</em>. The crucial part is the order — the firewall reads top to bottom and <strong>stops at the first rule that matches</strong>. Anything no rule matches is blocked by default.</p>
-    <p>Your task: let staff browse, resolve addresses and submit mail; allow authorised IT access to the server over SSH but block outsiders. Configure each rule's source, destination, direction, protocol and port. Add rules in plain language — you'll see the real firewall version appear in the list.</p>
+    <p>Your task: let the business work (staff need web, email and address lookups) while keeping intruders out. Add rules in plain language — you'll see the real firewall version appear in the list.</p>
   </div>
 
   <div class="bench">
@@ -637,18 +708,26 @@
             <option value="allow">Allow</option>
             <option value="deny">Block</option>
           </select>
-          <select id="rb-service"></select><label class="mini-field">Source <select id="rb-source"><option value="staff">Staff</option><option value="it">Authorised IT</option><option value="external">Outside</option><option value="*">Any</option></select></label><label class="mini-field">Destination <select id="rb-target"><option value="internet">Internet</option><option value="resolver">DNS resolver</option><option value="mail">Mail relay</option><option value="server">Company server</option><option value="*">Any</option></select></label><label class="mini-field">Direction <select id="rb-dir"><option value="out">Outbound</option><option value="in">Inbound</option></select></label><label class="mini-field">Protocol <select id="rb-proto"><option value="TCP">TCP</option><option value="UDP">UDP</option></select></label>
+          <select id="rb-service"></select>
           <button class="btn small" id="rb-add">Add rule</button>
         </div>
         <div class="note">Rules are checked from the top down. Drag isn't needed — use the arrows to reorder.</div>
         <div class="rules" id="fw3-rules"></div>
-        <button class="link" id="fw3-reset">Clear all rules</button>
+        <div style="display:flex; gap:18px; align-items:center; flex-wrap:wrap">
+          <button class="link" id="fw3-reset">Clear all rules</button>
+          <button class="link" id="fw3-how">Show me how</button>
+        </div>
+        <div id="fw3-worked" class="callout" style="display:none; margin-top:14px">
+          <div class="ch">A worked example</div>
+          <p>Staff need three things going <em>out</em>: secure web (443), address lookups (53) and email (25). Add an <b>allow</b> rule for each. You don't need any rule for the inbound attacks — anything you haven't allowed is blocked by default, so remote logins from outside are already stopped. Keep the list short and open only what's genuinely needed.</p>
+          <button class="btn small" id="fw3-loadeg" style="margin-top:8px">Load this example</button>
+        </div>
       </div>
     </div>
     <div class="panel">
       <div class="panel-h">Live traffic <span class="tag">run it through</span></div>
       <div class="panel-b">
-        <p class="note" style="margin-top:0">Simulated network connections are waiting. Run them through your rule list and see what each one hits.</p>
+        <p class="note" style="margin-top:0">Six real connections are waiting. Run them through your rule list and see what each one hits.</p>
         <div class="traffic" id="fw3-traffic"></div>
         <div style="margin-top:14px; display:flex; gap:10px; align-items:center">
           <button class="btn" id="fw3-run">Run the traffic</button>
@@ -677,7 +756,7 @@
   <div class="kicker fw"><b>Firewall lab</b> &middot; stage 4 of 5</div>
   <h2>Nobody can send email. Fix it.</h2>
   <div class="teach">
-    <p>A colleague set up this firewall and now staff are complaining: the website loads, but <strong>nobody can send email and address lookups fail</strong>. The broad staff-deny rule is above the specific allowances. Even though each later rule is valid, traffic never reaches it.</p>
+    <p>A colleague set up this firewall and now staff are complaining: the website loads, but <strong>nobody can send email and address lookups fail</strong>. Nothing here is "broken" in the usual sense — every rule works exactly as written. The problem is the order.</p>
     <p>Run the traffic to see the damage, then fix the list. Remember the golden rule: the firewall stops at the <em>first</em> rule that matches.</p>
   </div>
 
@@ -690,7 +769,7 @@
             <option value="allow">Allow</option>
             <option value="deny">Block</option>
           </select>
-          <select id="rb4-service"></select><label class="mini-field">Source <select id="rb4-source"><option value="staff">Staff</option><option value="it">Authorised IT</option><option value="external">Outside</option><option value="*">Any</option></select></label><label class="mini-field">Destination <select id="rb4-target"><option value="internet">Internet</option><option value="resolver">DNS resolver</option><option value="mail">Mail relay</option><option value="server">Company server</option><option value="*">Any</option></select></label><label class="mini-field">Direction <select id="rb4-dir"><option value="out">Outbound</option><option value="in">Inbound</option></select></label><label class="mini-field">Protocol <select id="rb4-proto"><option value="TCP">TCP</option><option value="UDP">UDP</option></select></label>
+          <select id="rb4-service"></select>
           <button class="btn small" id="rb4-add">Add rule</button>
         </div>
         <div class="rules" id="fw4-rules"></div>
@@ -711,7 +790,7 @@
 
   <div class="callout" id="fw4-after" style="display:none">
     <div class="ch">Fixed</div>
-    <p>An overly broad blocking rule at the top can shadow later allowances, even when those later rules are correct. "Block everything" is easy; the real work is being <em>precise</em> about what to block and where to put it.</p>
+    <p>A single rule that blocks too much, placed too high, can quietly take out services you meant to allow. "Block everything" is easy; the real work is being <em>precise</em> about what to block and where to put it.</p>
   </div>
 
   <div class="nav">
@@ -726,7 +805,7 @@
   <div class="kicker fw"><b>Firewall lab</b> &middot; stage 5 of 5</div>
   <h2>New traffic your rules have never met</h2>
   <div class="teach">
-    <p>A new collection of traffic will test the rule list from stage 3 — ones you didn't design for. A good configuration keeps the business running and still turns intruders away, even on traffic it has never seen.</p>
+    <p>Same idea as the antivirus test. We'll take the rule list you built in stage 3 and send a fresh set of connections through it — ones you didn't design for. A good configuration keeps the business running and still turns intruders away, even on traffic it has never seen.</p>
   </div>
 
   <div class="panel inset" style="margin-bottom:14px">
@@ -781,7 +860,7 @@
 
   <div class="teach">
     <h3>What the two have in common</h3>
-    <p>Neither tool is ever perfect. Antivirus settings affect both <em>missed malware</em> and <em>false alarms</em>. The relationship is not always a simple trade-off. The firewall trades <em>security</em> against <em>staff being able to work</em>. In both, "block more" is not the same as "safer," and each tool is blind to what the other handles. That's why real organisations run them together, in layers, rather than choosing one.</p>
+    <p>Neither tool is ever perfect. The antivirus trades <em>missed malware</em> against <em>false alarms</em> — tighten one and the other gets worse. The firewall trades <em>security</em> against <em>staff being able to work</em>. In both, "block more" is not the same as "safer," and each tool is blind to what the other handles. That's why real organisations run them together, in layers, rather than choosing one.</p>
   </div>
 
   <div class="examq">
@@ -811,6 +890,7 @@
   <div class="nav">
     <button class="link" onclick="go(11)">Back</button>
     <div class="spacer"></div>
+    <a class="link" href="measures.html">Measures &amp; threats lesson</a>
     <button class="btn ghost" onclick="go(0)">Back to the start</button>
   </div>
 </section>
@@ -1013,7 +1093,7 @@ function syncBehaviourUI(){
 const SERVICES = {
   https:{label:"Secure web browsing", port:443, proto:"TCP", dir:"out", desc:"Loading encrypted websites. Staff need this outbound."},
   dns:{label:"Web address lookups (DNS)", port:53, proto:"UDP", dir:"out", desc:"Turns a web address into a number the computer can reach. Needed outbound, or nothing loads."},
-  smtp:{label:"Submitting email", port:587, proto:"TCP", dir:"out", desc:"SMTP submission over port 587, used by many mail clients to submit outgoing email."},
+  smtp:{label:"Sending email", port:25, proto:"TCP", dir:"out", desc:"Outbound email. Staff need this to send messages."},
   http:{label:"Old (insecure) web", port:80, proto:"TCP", dir:"out", desc:"Unencrypted web. Still used by some sites."},
   ssh:{label:"Remote admin from outside (SSH)", port:22, proto:"TCP", dir:"in", desc:"Lets someone outside control a machine. Attackers probe this constantly."},
   rdp:{label:"Remote desktop from outside (RDP)", port:3389, proto:"TCP", dir:"in", desc:"Full remote desktop from outside. A favourite target for break-ins."}
@@ -1023,61 +1103,63 @@ const PORT_CARDS = ["https","dns","smtp","ssh"];
 function ruleText(r){
   const dir = r.dir==="in"?"inbound":"outbound";
   const svc = Object.values(SERVICES).find(s=>s.port===r.port && s.proto===r.proto && s.dir===r.dir);
-  const name = svc? svc.label : (r.port==='*'?'All services':(dir+' '+r.proto+' '+r.port));
-  return {name, mono:(r.src||"*")+" → "+(r.dst||"*")+" / "+r.proto+" "+r.port+" / "+dir};
+  const name = svc? svc.label : (dir+" "+r.proto+" "+r.port);
+  return {name, mono:r.proto+" "+r.port+" / "+dir};
 }
 
-function makeRule(action, serviceKey, source="*", target="*", dir, proto){
+function makeRule(action, serviceKey){
   const s=SERVICES[serviceKey];
-  return {action, src:source, dst:target, dir:dir||s.dir, proto:proto||s.proto, port:s.port, key:serviceKey};
+  return {action, dir:s.dir, proto:s.proto, port:s.port, key:serviceKey};
 }
 
 function fwEval(pkt, rules){
   for(let i=0;i<rules.length;i++){
     const r=rules[i];
-    const matches=(r.dir==="*"||r.dir===pkt.dir)
-      && (r.proto==="*"||r.proto===pkt.proto)
-      && (r.port==="*"||r.port===pkt.port)
-      && (!r.src||r.src==="*"||r.src===pkt.src)
-      && (!r.dst||r.dst==="*"||r.dst===pkt.dst);
-    if(matches) return {action:r.action, by:i};
+    if(r.dir===pkt.dir && r.proto===pkt.proto && r.port===pkt.port){
+      return {action:r.action, by:i};
+    }
   }
-  return {action:"deny", by:-1};
+  return {action:"deny", by:-1}; // default deny
 }
 
 // traffic sets
 const PRACTICE_TRAFFIC = [
- {what:"Staff open the company portal",src:"staff",dst:"internet",dir:"out",proto:"TCP",port:443,legit:true},
- {what:"Staff look up a web address",src:"staff",dst:"resolver",dir:"out",proto:"UDP",port:53,legit:true},
- {what:"Staff submit a message to the mail relay",src:"staff",dst:"mail",dir:"out",proto:"TCP",port:587,legit:true},
- {what:"Approved IT support connect to the server",src:"it",dst:"server",dir:"in",proto:"TCP",port:22,legit:true},
- {what:"Untrusted external host probes SSH",src:"external",dst:"server",dir:"in",proto:"TCP",port:22,legit:false},
- {what:"Untrusted external host probes RDP",src:"external",dst:"server",dir:"in",proto:"TCP",port:3389,legit:false},
- {what:"Compromised staff laptop sends data over HTTPS",src:"staff",dst:"internet",dir:"out",proto:"TCP",port:443,legit:false,note:true,noteText:"This matches legitimate HTTPS metadata exactly. Our rule-based model cannot distinguish intent; endpoint detection and monitoring would also be needed."}
+  {what:"Staff opening a secure website", dir:"out", proto:"TCP", port:443, legit:true},
+  {what:"Computer looking up a web address", dir:"out", proto:"UDP", port:53, legit:true},
+  {what:"Staff sending an email", dir:"out", proto:"TCP", port:25, legit:true},
+  {what:"Outsider trying to log in via SSH", dir:"in", proto:"TCP", port:22, legit:false},
+  {what:"Outsider trying remote desktop (RDP)", dir:"in", proto:"TCP", port:3389, legit:false},
+  {what:"Malware quietly phoning home over HTTPS", dir:"out", proto:"TCP", port:443, legit:false, note:true,
+    noteText:"This hides inside normal web traffic on port 443. A firewall judging by port alone can't tell it apart from real browsing — a real limitation, not your mistake."}
 ];
 const UNSEEN_TRAFFIC = [
- {what:"Staff download legitimate web resources",src:"staff",dst:"internet",dir:"out",proto:"TCP",port:443,legit:true},
- {what:"A staff workstation performs DNS lookup",src:"staff",dst:"resolver",dir:"out",proto:"UDP",port:53,legit:true},
- {what:"Mail client submits mail",src:"staff",dst:"mail",dir:"out",proto:"TCP",port:587,legit:true},
- {what:"Authorised IT technician administers the server",src:"it",dst:"server",dir:"in",proto:"TCP",port:22,legit:true},
- {what:"Visitor attempts SSH from outside",src:"external",dst:"server",dir:"in",proto:"TCP",port:22,legit:false},
- {what:"Outside source scans remote desktop",src:"external",dst:"server",dir:"in",proto:"TCP",port:3389,legit:false},
- {what:"Staff laptop tries outbound SSH to an external host",src:"staff",dst:"internet",dir:"out",proto:"TCP",port:22,legit:false},
- {what:"Malware uses the same metadata as ordinary HTTPS",src:"staff",dst:"internet",dir:"out",proto:"TCP",port:443,legit:false,note:true,noteText:"Identical packet metadata to legitimate browsing: this test exposes a limitation, not a misconfiguration."}
+  {what:"Computer looking up a web address", dir:"out", proto:"UDP", port:53, legit:true},
+  {what:"Staff opening a secure website", dir:"out", proto:"TCP", port:443, legit:true},
+  {what:"Unknown outsider probing SSH", dir:"in", proto:"TCP", port:22, legit:false},
+  {what:"Staff sending an email", dir:"out", proto:"TCP", port:25, legit:true},
+  {what:"Outsider attempting remote desktop", dir:"in", proto:"TCP", port:3389, legit:false},
+  {what:"Staff visiting an old http-only site", dir:"out", proto:"TCP", port:80, legit:true}
 ];
+const FW4_BROKEN = [
+  {action:"deny", dir:"out", proto:"TCP", port:25, key:"smtp", broadNote:true},
+  {action:"allow", dir:"out", proto:"TCP", port:443, key:"https"},
+  {action:"allow", dir:"out", proto:"TCP", port:25, key:"smtp"},
+  {action:"allow", dir:"out", proto:"UDP", port:53, key:"dns"}
+];
+// Actually make the broken one genuinely order/over-block based:
 const FW4_START = [
- {action:"deny",dir:"out",proto:"*",port:"*",src:"staff",dst:"*",key:"broad-deny"},
- {action:"allow",dir:"out",proto:"TCP",port:443,src:"staff",dst:"internet",key:"https"},
- {action:"allow",dir:"out",proto:"UDP",port:53,src:"staff",dst:"resolver",key:"dns"},
- {action:"allow",dir:"out",proto:"TCP",port:587,src:"staff",dst:"mail",key:"smtp"},
- {action:"deny",dir:"in",proto:"TCP",port:22,src:"external",dst:"server",key:"ssh"}
+  {action:"deny", dir:"in", proto:"TCP", port:22, key:"ssh"},
+  {action:"deny", dir:"out", proto:"UDP", port:53, key:"dns"},
+  {action:"allow", dir:"out", proto:"TCP", port:443, key:"https"},
+  {action:"deny", dir:"out", proto:"TCP", port:25, key:"smtp"}
 ];
 const FW4_TRAFFIC = [
- {what:"Staff web browsing",src:"staff",dst:"internet",dir:"out",proto:"TCP",port:443,legit:true},
- {what:"Staff DNS requests",src:"staff",dst:"resolver",dir:"out",proto:"UDP",port:53,legit:true},
- {what:"Staff sending mail",src:"staff",dst:"mail",dir:"out",proto:"TCP",port:587,legit:true},
- {what:"External SSH probe",src:"external",dst:"server",dir:"in",proto:"TCP",port:22,legit:false}
+  {what:"Staff opening a secure website", dir:"out", proto:"TCP", port:443, legit:true},
+  {what:"Computer looking up a web address", dir:"out", proto:"UDP", port:53, legit:true},
+  {what:"Staff sending an email", dir:"out", proto:"TCP", port:25, legit:true},
+  {what:"Outsider trying to log in via SSH", dir:"in", proto:"TCP", port:22, legit:false}
 ];
+
 /* ---- rule list rendering + editing ---- */
 function serviceOptions(selectId){
   const sel=document.getElementById(selectId); sel.innerHTML="";
@@ -1132,7 +1214,7 @@ function buildTraffic(containerId, traffic){
     const dir=p.dir==="in"?"inbound":"outbound";
     const el=document.createElement("div"); el.className="pkt"; el.dataset.i=i;
     el.innerHTML='<div class="pwhat">'+p.what+'</div>'+
-      '<div class="pmeta">'+(p.src||'?')+' → '+(p.dst||'?')+' &middot; '+dir+' &middot; '+p.proto+' '+p.port+'</div>'+
+      '<div class="pmeta">'+dir+' &middot; '+p.proto+' '+p.port+'</div>'+
       '<div class="pres"></div>';
     c.appendChild(el);
   });
@@ -1223,18 +1305,19 @@ function buildEval(){
     row("Attacks blocked", fw.stop)+
     row("Attacks let through", fw.breach);
 
-  // Export experimental measurements only: the learner must write their own judgement.
+  // evidence text
   const marked=[...STATE.av.selected];
   const ev =
-"SECURITY BENCH: MY EXPERIMENTAL RESULTS\n"+
-"ANTIVIRUS / UNSEEN SAMPLES\n"+
-"Checks selected: "+(marked.length?bProps(marked).join("; "):"none")+"\n"+
-"Threshold: "+STATE.av.threshold+"\nKnown signatures enabled: "+STATE.av.useSig+"\n"+
-"Caught "+av.tp+"; missed "+av.fn+"; safe allowed "+av.tn+"; false alarms "+av.fp+"; detection rate "+detRate+"%\n\n"+
-"FIREWALL / UNSEEN TRAFFIC\n"+
-"Legitimate connections allowed "+fw.work+"; legitimate blocked "+fw.disr+"; unwanted blocked "+fw.stop+"; unwanted allowed "+fw.breach+"\n"+
-"Rules (first match wins):\n"+STATE.fw.rules.map((r,i)=>(i+1)+": "+r.action+" "+(r.src||"*")+" → "+(r.dst||"*")+" "+r.dir+" "+r.proto+" "+r.port).join("\n")+"\n\n"+
-"MY EXPLANATION AND JUDGEMENT: (complete in your own words)\n";
+"MY ANTIVIRUS (tested on 6 unseen files)\n"+
+"- Detection policy: flag if known fingerprint, or "+STATE.av.threshold+"+ of these warning signs: "+(marked.length?bProps(marked).join("; "):"none")+".\n"+
+"- Malware caught: "+av.tp+" of "+(av.tp+av.fn)+"   Missed: "+av.fn+"   False alarms: "+av.fp+"   Detection rate: "+detRate+"%\n"+
+"- Limitation seen: signatures miss new variants; heuristics raise false alarms on honest software (backup, sync, installers).\n\n"+
+"MY FIREWALL (tested on 6 unseen connections)\n"+
+"- Business services kept working: "+fw.work+"   Staff wrongly blocked: "+fw.disr+"\n"+
+"- Attacks blocked: "+fw.stop+"   Attacks let through: "+fw.breach+"\n"+
+"- Limitation seen: the firewall judges by port/direction, so malware hiding in normal web traffic (port 443) is hard to block without blocking real browsing; rule order matters.\n\n"+
+"JUDGEMENT\n"+
+"Each tool only does its own job — antivirus inspects files, the firewall controls connections — and neither is perfect alone. Antivirus trades missed malware against false alarms; the firewall trades security against staff being able to work. The sensible approach is layering both, plus staff training, rather than relying on one.";
   document.getElementById("evidence").value=ev;
 }
 function paintStoredAv(){ return STATE.av.unseen || {tp:0,fn:0,fp:0,tn:0}; }
@@ -1310,7 +1393,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     document.getElementById("av4-next").disabled=false;
     const after=document.getElementById("av4-after"), t=document.getElementById("av4-after-txt");
     after.style.display="block";
-    if(res.fp>0 && res.fn>0) t.textContent="You've got it from both ends: "+res.fp+" honest file(s) wrongly blocked and "+res.fn+" piece(s) of malware missed. Changing the policy can alter both measures. Evaluate the actual results before concluding.";
+    if(res.fp>0 && res.fn>0) t.textContent="You've got it from both ends: "+res.fp+" honest file(s) wrongly blocked and "+res.fn+" piece(s) of malware missed. Every adjustment that fixes one tends to worsen the other.";
     else if(res.fp>0) t.textContent="You caught all the malware, but blocked "+res.fp+" honest file(s). Loosen the policy and you risk missing real threats — that's the trade-off.";
     else if(res.fn>0) t.textContent="No false alarms, but "+res.fn+" piece(s) of malware got through. Tighten up and the false alarms return.";
     else t.textContent="A clean run on this set — no misses, no false alarms. The real test is files you haven't tuned against. See if it holds.";
@@ -1348,9 +1431,17 @@ document.addEventListener("DOMContentLoaded",()=>{
   buildTraffic("fw3-traffic", PRACTICE_TRAFFIC);
   document.getElementById("rb-add").addEventListener("click",()=>{
     const a=document.getElementById("rb-action").value, s=document.getElementById("rb-service").value;
-    STATE.fw.rules.push(makeRule(a,s,document.getElementById("rb-source").value,document.getElementById("rb-target").value,document.getElementById("rb-dir").value,document.getElementById("rb-proto").value)); syncList("fw3-rules",STATE.fw.rules,true);
+    STATE.fw.rules.push(makeRule(a,s)); syncList("fw3-rules",STATE.fw.rules,true);
   });
   document.getElementById("fw3-reset").addEventListener("click",()=>{STATE.fw.rules=[]; syncList("fw3-rules",STATE.fw.rules,true);});
+  document.getElementById("fw3-how").addEventListener("click",()=>{
+    const b=document.getElementById("fw3-worked"); b.style.display = b.style.display==="block"?"none":"block";
+  });
+  document.getElementById("fw3-loadeg").addEventListener("click",()=>{
+    STATE.fw.rules=[makeRule("allow","https"),makeRule("allow","dns"),makeRule("allow","smtp")];
+    syncList("fw3-rules",STATE.fw.rules,true);
+    document.getElementById("fw3-hint").textContent="Example loaded — now run the traffic and see how it does.";
+  });
   document.getElementById("fw3-run").addEventListener("click",()=>{
     const r=runTraffic("fw3-traffic",PRACTICE_TRAFFIC,STATE.fw.rules,"fw3");
     document.getElementById("fw3-read").style.display="grid";
@@ -1365,7 +1456,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   buildTraffic("fw4-traffic", FW4_TRAFFIC);
   document.getElementById("rb4-add").addEventListener("click",()=>{
     const a=document.getElementById("rb4-action").value, s=document.getElementById("rb4-service").value;
-    fw4rules.push(makeRule(a,s,document.getElementById("rb4-source").value,document.getElementById("rb4-target").value,document.getElementById("rb4-dir").value,document.getElementById("rb4-proto").value)); syncList("fw4-rules",fw4rules,true);
+    fw4rules.push(makeRule(a,s)); syncList("fw4-rules",fw4rules,true);
   });
   document.getElementById("fw4-reset").addEventListener("click",()=>{fw4rules=FW4_START.map(r=>({...r})); syncList("fw4-rules",fw4rules,true); document.getElementById("fw4-after").style.display="none";});
   document.getElementById("fw4-run").addEventListener("click",()=>{
