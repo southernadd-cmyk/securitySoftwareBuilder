@@ -341,13 +341,13 @@
     <div class="panel">
       <div class="panel-h">Antivirus <span class="tag">examines files</span></div>
       <div class="panel-b teach">
-        <p style="margin-bottom:0">An antivirus looks at <mark>files already on the computer</mark> — a download, an email attachment, a memory stick — and decides whether each one is safe to open. Its question is: <em>"is this thing dangerous?"</em></p>
+        <p style="margin-bottom:0">Antivirus software scans files and can monitor device activity, including downloads, processes and suspicious changes. Detection can produce missed threats and false alarms. Its question is: <em>"is this thing dangerous?"</em></p>
       </div>
     </div>
     <div class="panel">
       <div class="panel-h">Firewall <span class="tag">examines traffic</span></div>
       <div class="panel-b teach">
-        <p style="margin-bottom:0">A firewall sits at the <mark>edge of the network</mark> and watches connections going in and out. It never opens a file. Its question is: <em>"should this connection be allowed through?"</em></p>
+        <p style="margin-bottom:0">Firewalls can run on devices or at network boundaries. In this lab, yours judges network metadata; some real firewalls can also inspect application traffic. Its question is: <em>"should this connection be allowed through?"</em></p>
       </div>
     </div>
   </div>
@@ -372,7 +372,7 @@
   <div class="kicker"><b>Antivirus lab</b> &middot; stage 1 of 5</div>
   <h2>Catching malware by its fingerprint</h2>
   <div class="teach">
-    <p>Every known piece of malware has been seen before by security researchers, who record a short <strong>signature</strong> — think of it as a fingerprint taken from the file's contents. An antivirus keeps a list of these fingerprints. When it scans a file, it checks: <em>does this file's fingerprint match anything on the wanted list?</em></p>
+    <p>Some known malware can be recognised with a <strong>signature</strong> — think of it as a fingerprint taken from the file's contents. An antivirus keeps a list of these fingerprints. When it scans a file, it checks: <em>does this file's fingerprint match anything on the wanted list?</em></p>
     <p>Below is your detector. Right now it only knows how to do one thing: match fingerprints against its small database. Scan the files and see what it catches.</p>
   </div>
 
@@ -420,7 +420,7 @@
 
   <div class="callout" id="av1-after" style="display:none">
     <div class="ch">What just happened</div>
-    <p>Fingerprint matching is fast and it never raises a false alarm on a file it recognises. But look at <code>invoice_update.exe</code> — clearly doing damage, yet it sailed through. Its fingerprint simply wasn't on the list. That's the weakness we'll attack next.</p>
+    <p>Matching known signatures can be fast and effective, but even signature-based products are not immune to errors. But look at <code>invoice_update.exe</code> — clearly doing damage, yet it sailed through. Its fingerprint simply wasn't on the list. That's the weakness we'll attack next.</p>
   </div>
 
   <div class="nav">
@@ -662,7 +662,7 @@
   <div class="kicker fw"><b>Firewall lab</b> &middot; stage 2 of 5</div>
   <h2>What the gate can actually see</h2>
   <div class="teach">
-    <p>A firewall can't read your emails or see inside a download. For each connection it only sees a few labels on the outside — and it has to decide from those alone. Three of them do most of the work:</p>
+    <p>This teaching firewall looks only at connection information, not the contents of messages. Real firewalls vary: some also inspect application data and connection state. Three of them do most of the work:</p>
     <h3>The port — which service is this?</h3>
     <p>Every type of internet service has a numbered <strong>port</strong>, like a numbered door into the building. The number tells the firewall what <em>kind</em> of connection it is. Tap each one to see what it's for.</p>
   </div>
@@ -841,7 +841,7 @@
   <div class="kicker">Evaluation &middot; make a judgement</div>
   <h2>So which matters more?</h2>
   <div class="teach">
-    <p>You've now built both tools and watched them succeed and fail. Here's the evidence you generated — your own results, not a textbook's.</p>
+    <p>You've tested two different security approaches and recorded where they succeed and fail. Here's the evidence you generated — your own results, not a textbook's.</p>
   </div>
 
   <div class="evalgrid">
@@ -861,7 +861,7 @@
 
   <div class="teach">
     <h3>What the two have in common</h3>
-    <p>Neither tool is ever perfect. The antivirus trades <em>missed malware</em> against <em>false alarms</em> — tighten one and the other gets worse. The firewall trades <em>security</em> against <em>staff being able to work</em>. In both, "block more" is not the same as "safer," and each tool is blind to what the other handles. That's why real organisations run them together, in layers, rather than choosing one.</p>
+    <p>Neither tool is ever perfect. Antivirus tuning can affect both <em>missed malware</em> and <em>false alarms</em>. Examine the evidence before assuming every stricter setting is better. The firewall trades <em>security</em> against <em>staff being able to work</em>. In both, "block more" is not the same as "safer," and each tool is blind to what the other handles. That's why real organisations run them together, in layers, rather than choosing one.</p>
   </div>
 
   <div class="examq">
@@ -1455,8 +1455,9 @@ document.addEventListener("DOMContentLoaded",()=>{
   document.getElementById("fw3-run").addEventListener("click",()=>{
     const r=runTraffic("fw3-traffic",PRACTICE_TRAFFIC,STATE.fw.rules,"fw3");
     document.getElementById("fw3-read").style.display="grid";
-    document.getElementById("fw3-next").disabled=false;
-    document.getElementById("fw3-hint").textContent = r.disr>0? "Some staff got blocked — check which service and add an allow rule.":"Looking good. Try the trickier tests next.";
+    const pass=r.work===4 && r.disr===0 && r.stop===2 && r.breach===0;
+    document.getElementById("fw3-next").disabled=!pass;
+    document.getElementById("fw3-hint").textContent = pass ? "Your rules preserve all four essential services and block both unauthorised inbound attempts." : "Not correct yet: diagnose the packet results and revise the matching rules. You need four working services and two blocked external attempts.";
   });
 
   // FW stage 4 troubleshoot
