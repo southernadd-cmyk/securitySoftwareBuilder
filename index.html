@@ -1092,7 +1092,7 @@ function syncBehaviourUI(){
 const SERVICES = {
   https:{label:"Secure web browsing", port:443, proto:"TCP", dir:"out", desc:"Loading encrypted websites. Staff need this outbound."},
   dns:{label:"Web address lookups (DNS)", port:53, proto:"UDP", dir:"out", desc:"Turns a web address into a number the computer can reach. Needed outbound, or nothing loads."},
-  smtp:{label:"Sending email", port:25, proto:"TCP", dir:"out", desc:"Outbound email. Staff need this to send messages."},
+  smtp:{label:"Submitting email", port:587, proto:"TCP", dir:"out", desc:"Outbound email. Staff need this to send messages."},
   http:{label:"Old (insecure) web", port:80, proto:"TCP", dir:"out", desc:"Unencrypted web. Still used by some sites."},
   ssh:{label:"Remote admin from outside (SSH)", port:22, proto:"TCP", dir:"in", desc:"Lets someone outside control a machine. Attackers probe this constantly."},
   rdp:{label:"Remote desktop from outside (RDP)", port:3389, proto:"TCP", dir:"in", desc:"Full remote desktop from outside. A favourite target for break-ins."}
@@ -1102,23 +1102,24 @@ const PORT_CARDS = ["https","dns","smtp","ssh"];
 function ruleText(r){
   const dir = r.dir==="in"?"inbound":"outbound";
   const svc = Object.values(SERVICES).find(s=>s.port===r.port && s.proto===r.proto && s.dir===r.dir);
-  const name = svc? svc.label : (dir+" "+r.proto+" "+r.port);
-  return {name, mono:r.proto+" "+r.port+" / "+dir};
+  const name=svc?svc.label:(r.port==="*"?"Any service":dir+" "+r.proto+" "+r.port);
+  return {name, mono:(r.src||"*")+" → "+(r.dst||"*")+" / "+r.proto+" "+r.port+" / "+dir};
 }
 
-function makeRule(action, serviceKey){
-  const s=SERVICES[serviceKey];
-  return {action, dir:s.dir, proto:s.proto, port:s.port, key:serviceKey};
+function makeRule(action, serviceKey, source="*", target="*", dir, proto){
+  const service=SERVICES[serviceKey];
+  return {action,src:source,dst:target,dir:dir||service.dir,proto:proto||service.proto,port:service.port,key:serviceKey};
 }
-
-function fwEval(pkt, rules){
+function fwEval(pkt,rules){
   for(let i=0;i<rules.length;i++){
     const r=rules[i];
-    if(r.dir===pkt.dir && r.proto===pkt.proto && r.port===pkt.port){
-      return {action:r.action, by:i};
-    }
+    if((r.dir==="*"||r.dir===pkt.dir) &&
+       (r.proto==="*"||r.proto===pkt.proto) &&
+       (r.port==="*"||r.port===pkt.port) &&
+       (!r.src||r.src==="*"||r.src===pkt.src) &&
+       (!r.dst||r.dst==="*"||r.dst===pkt.dst)) return {action:r.action,by:i};
   }
-  return {action:"deny", by:-1}; // default deny
+  return {action:"deny",by:-1};
 }
 
 // traffic sets
@@ -1223,7 +1224,7 @@ function buildTraffic(containerId, traffic){
     const dir=p.dir==="in"?"inbound":"outbound";
     const el=document.createElement("div"); el.className="pkt"; el.dataset.i=i;
     el.innerHTML='<div class="pwhat">'+p.what+'</div>'+
-      '<div class="pmeta">'+dir+' &middot; '+p.proto+' '+p.port+'</div>'+
+      '<div class="pmeta">'+(p.src||'?')+' → '+(p.dst||'?')+' &middot; '+dir+' &middot; '+p.proto+' '+p.port+'</div>'+
       '<div class="pres"></div>';
     c.appendChild(el);
   });
@@ -1440,7 +1441,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   buildTraffic("fw3-traffic", PRACTICE_TRAFFIC);
   document.getElementById("rb-add").addEventListener("click",()=>{
     const a=document.getElementById("rb-action").value, s=document.getElementById("rb-service").value;
-    STATE.fw.rules.push(makeRule(a,s)); syncList("fw3-rules",STATE.fw.rules,true);
+    STATE.fw.rules.push(makeRule(a,s,document.getElementById("rb-source").value,document.getElementById("rb-target").value,document.getElementById("rb-dir").value,document.getElementById("rb-proto").value)); syncList("fw3-rules",STATE.fw.rules,true);
   });
   document.getElementById("fw3-reset").addEventListener("click",()=>{STATE.fw.rules=[]; syncList("fw3-rules",STATE.fw.rules,true);});
   document.getElementById("fw3-how").addEventListener("click",()=>{
@@ -1465,7 +1466,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   buildTraffic("fw4-traffic", FW4_TRAFFIC);
   document.getElementById("rb4-add").addEventListener("click",()=>{
     const a=document.getElementById("rb4-action").value, s=document.getElementById("rb4-service").value;
-    fw4rules.push(makeRule(a,s)); syncList("fw4-rules",fw4rules,true);
+    fw4rules.push(makeRule(a,s,document.getElementById("rb4-source").value,document.getElementById("rb4-target").value,document.getElementById("rb4-dir").value,document.getElementById("rb4-proto").value)); syncList("fw4-rules",fw4rules,true);
   });
   document.getElementById("fw4-reset").addEventListener("click",()=>{fw4rules=FW4_START.map(r=>({...r})); syncList("fw4-rules",fw4rules,true); document.getElementById("fw4-after").style.display="none";});
   document.getElementById("fw4-run").addEventListener("click",()=>{
