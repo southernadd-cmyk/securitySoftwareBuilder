@@ -1,71 +1,1422 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Security Fieldwork — Interactive Computing</title><style>
-:root{--paper:#f2efe7;--ink:#252b25;--line:#aeb7ad;--green:#155e49;--red:#973c32}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.5 Georgia,serif}header,nav,button,small,table,select,.output{font-family:Consolas,monospace}header{padding:18px max(20px,calc((100vw - 1060px)/2));border-bottom:2px solid var(--ink);font-weight:bold}main{max-width:1060px;margin:auto;padding:0 20px 80px}h1,h2{font-weight:400;letter-spacing:-.065em;line-height:1.04}h1{font-size:clamp(55px,9vw,105px);margin:15px 0 28px}h2{font-size:clamp(34px,5vw,51px);margin:12px 0 23px}.hero{padding:65px 0 50px;display:grid;grid-template-columns:2fr 1fr;gap:50px;border-bottom:1px solid}.hero p{font-size:21px}.hero aside{border-left:1px solid;padding:15px 0 0 25px;align-self:end}.hero aside p{font-size:15px}small{font-size:11px;letter-spacing:.07em;color:#5b685e}nav{display:flex;gap:26px;overflow:auto;border-bottom:1px solid}nav button{border:0;border-bottom:4px solid transparent;background:transparent;padding:22px 0 15px;white-space:nowrap;color:#5b685e;font-size:12px;cursor:pointer}nav button.on{color:var(--ink);border-color:var(--green);font-weight:bold}.page{display:none;padding:45px 0}.page.on{display:grid;grid-template-columns:210px minmax(0,1fr);gap:52px}.rail{border-top:3px solid var(--ink);padding-top:17px;font-size:14px;color:#5b685e}.lesson{max-width:760px}.note{border-left:3px solid var(--green);padding:5px 20px;margin:26px 0}.box{margin:30px 0;border:1px solid var(--ink);background:#fffdf8}.bar{background:var(--ink);color:#fff;font:12px Consolas,monospace;padding:12px 18px}.inside{padding:24px}label{display:block;margin:13px 0}.actions{display:flex;gap:10px;flex-wrap:wrap;margin:19px 0}.btn{background:var(--ink);color:white;border:1px solid var(--ink);padding:11px 16px;cursor:pointer;font-size:12px}.btn:hover{background:var(--green)}.btn.alt{background:transparent;color:var(--ink)}.btn.alt:hover{background:#e4e9df}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #bd813c;outline-offset:3px}input[type=checkbox],input[type=range]{accent-color:var(--green)}.output{white-space:pre-wrap;font-size:12px;background:#e5ece3;padding:13px;border-left:3px solid var(--green);margin-top:15px}.output:empty{display:none}table{border-collapse:collapse;width:100%;font-size:12px}td,th{padding:10px 7px;text-align:left;border-bottom:1px solid var(--line)}th{font-weight:400;color:#5b685e}.fields{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.fields label{font:12px Consolas,monospace}select{width:100%;display:block;background:white;border:1px solid var(--line);padding:9px;margin-top:6px;border-radius:0}.network{display:flex;align-items:center;gap:10px;margin:25px 0;font:12px Consolas,monospace}.network span{border:1px solid var(--ink);flex:1;text-align:center;padding:23px 5px}.network i{width:14%;border-top:2px solid var(--green)}textarea{width:100%;height:185px;padding:13px;font:17px Georgia,serif;background:#fffdf8;border:1px solid var(--line)}footer{border-top:1px solid var(--ink);font:12px Consolas,monospace;padding-top:20px}@media(max-width:740px){.hero,.page.on{grid-template-columns:1fr;gap:16px}.hero aside{border:0;border-top:1px solid;padding:15px 0}.fields{grid-template-columns:1fr}}
-h1,h2,h3{letter-spacing:-.035em;font-family:Georgia,serif}h1{font-weight:700}h2{font-weight:700}.hero{padding:28px 0 32px;grid-template-columns:3fr 1fr}.hero aside{font:13px/1.6 Consolas,monospace}.page.on{grid-template-columns:145px minmax(0,1fr);gap:52px}.rail{font:12px/1.7 Consolas,monospace}.lesson{max-width:800px}h3{font-size:26px;line-height:1.25;margin:34px 0 12px}p{max-width:67ch}.case{border-top:1px solid var(--line);padding:14px 0;margin:14px 0}.case b{font:12px Consolas,monospace}.case p{margin:7px 0}.quiz{border:1px solid var(--line);padding:17px;margin:22px 0;background:#fffdf8}.quiz>p{font-weight:bold}.quiz button{width:100%;display:block;padding:11px;text-align:left;margin:8px 0;border:1px solid var(--line);background:transparent;font:13px Consolas,monospace}.quiz button:hover{border-color:var(--ink)}.quiz .result{font-size:14px;margin-top:12px}.write{width:100%;min-height:116px;background:#fffdf8;border:1px solid var(--line);padding:13px;font:16px/1.5 Georgia,serif}.lesson-title{border-top:3px solid var(--ink);padding-top:15px;margin-top:35px}.gloss{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.gloss div{border-top:1px solid var(--ink);padding-top:10px}.gloss b{font:13px Consolas,monospace}.gloss p{font-size:15px}.tip{border-left:3px solid #985642;padding:12px 17px;background:#f3e6de;margin:17px 0}@media(max-width:740px){.gloss{grid-template-columns:1fr}.hero,.page.on{grid-template-columns:1fr}}@media print{nav,.actions{display:none}.page{display:block;break-before:page}} /* Fieldwork interface — utilitarian print-lab layout */
-:root{--paper:#f7f7f4;--ink:#202521;--line:#c9ceca;--green:#1e604a;--red:#9f382c}
-body{font:16px/1.58 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--paper)}
-header{background:#202521;color:#f7f7f4;border:0;padding:13px max(22px,calc((100vw - 1320px)/2));letter-spacing:.09em;font-size:12px}
-main{max-width:1320px;padding:0 22px 75px}
-.hero{display:block;border-bottom:2px solid var(--ink);padding:28px 0 22px;position:relative}
-.hero h1{font:700 clamp(26px,3vw,40px)/1.12 system-ui,sans-serif;letter-spacing:-.04em;margin:8px 0 10px}
-.hero h1 br{display:none}.hero h1 i{font-style:normal}.hero h1 br:after{content:" "}
-.hero p{margin:0;font-size:14px;max-width:760px}.hero aside{position:absolute;right:0;top:24px;padding:0;border:0;text-align:right;max-width:260px}.hero aside p{font-size:12px}
-nav{position:sticky;top:0;background:var(--paper);z-index:10;gap:0;border-bottom:1px solid var(--ink)}
-nav button{font:600 12px/1.3 system-ui,sans-serif;text-align:left;flex:1;padding:16px 12px;border-bottom:3px solid transparent;color:#4b5550}
-nav button:not(:last-child){border-right:1px solid var(--line)}nav button.on{background:#e1e9e3;border-color:var(--green);color:#173f31}
-.page.on{grid-template-columns:185px minmax(0,1fr);gap:44px;padding:36px 0}
-.rail{position:sticky;top:80px;align-self:start;border-top:0;border-left:3px solid var(--green);padding:0 0 0 15px;font:12px/1.65 system-ui,sans-serif}
-.rail p{font:12px/1.65 system-ui,sans-serif;color:#56635c}
-.lesson{max-width:990px;min-width:0}.lesson>p,.lesson>.note{max-width:72ch}
-.lesson>small{font:700 11px system-ui;letter-spacing:.12em}.lesson h2{font:700 clamp(27px,3.4vw,42px)/1.13 system-ui,sans-serif;letter-spacing:-.045em;margin:4px 0 20px}
-h3,.lesson h3{font:700 21px/1.25 system-ui,sans-serif;letter-spacing:-.02em;margin:30px 0 12px}
-.lesson-title{border-top:2px solid var(--ink);padding-top:17px}
-.note{background:#ecf2ee;border-left:4px solid var(--green);padding:13px 17px}
-.gloss{grid-template-columns:repeat(2,minmax(0,1fr));max-width:840px;gap:22px}
-.gloss div{background:#fff;border:1px solid var(--line);padding:16px;border-top:3px solid var(--ink)}
-.gloss p{margin:6px 0 0}
-.box{border:1px solid #9ba7a0;background:#fff;max-width:100%;margin:24px 0 34px}
-.bar{background:#e4e9e5;color:#222;border-bottom:1px solid var(--line);padding:12px 20px;font:700 12px system-ui;letter-spacing:.08em}
-.inside{padding:20px}.inside>label{padding:8px 0;border-bottom:1px solid #e6e9e5}
-.btn{background:var(--ink);color:#fff;border-radius:0;font:600 13px system-ui,sans-serif;min-height:42px}
-.btn.alt{border:1px solid #a8b2aa;background:#fff}
-.quiz{background:#fff;border:1px solid #b5beb8;padding:20px;max-width:760px;box-shadow:none}
-.quiz button{background:#fafbf9;font:14px system-ui,sans-serif;max-width:640px;padding:12px;cursor:pointer}
-.quiz button:hover{background:#e9f0ec}.quiz .result{padding:10px 12px;background:#f0f4f1}
-.output{background:#eff3f0;border-left:3px solid var(--green);line-height:1.7;overflow-wrap:anywhere}
-.case{max-width:780px}
-.write,textarea{font:15px/1.55 system-ui,sans-serif;max-width:900px;min-height:135px}
-.fields{max-width:850px}.fields select{font:13px system-ui,sans-serif}
-.network{max-width:790px}
-.network span{background:#fff;padding:25px 8px}
-table{font:13px/1.5 system-ui,sans-serif}
-th{background:#f1f4f2;font-weight:600}td,th{padding:12px 10px}
-.tip{max-width:780px}
-footer{font:12px system-ui,sans-serif}
-@media(max-width:920px){.hero aside{display:none}.page.on{grid-template-columns:135px minmax(0,1fr);gap:24px}}
-@media(max-width:650px){main{padding:0 14px 45px}.hero{padding:19px 0}.hero h1{font-size:28px}nav button{font-size:10px;padding:14px 6px}.page.on{display:block;padding-top:20px}.rail{position:static;border-left:0;border-bottom:1px solid var(--line);margin-bottom:24px;padding:0 0 12px}.rail p{display:inline;margin-left:8px}.gloss,.fields{grid-template-columns:1fr}.inside{padding:13px}.lesson h2{font-size:29px}.network span{font-size:10px;padding:15px 2px}}
-@media print{nav,.hero aside{display:none}.page{display:block!important}.rail{position:static}.box{break-inside:avoid}}
-</style></head><body><header>SECURITY FIELDWORK &nbsp; / &nbsp; COMPUTING</header><main>
-<div class="hero"><div><small>COMPUTING / INTERACTIVE PRACTICAL</small><h1>Security fieldwork <i>/</i> antivirus + firewalls</h1><p>A guided investigation into antivirus detection and network firewalls. Learn the principles, test your ideas, and explain where protection fails.</p></div><aside><small>STUDENT FIELD MANUAL</small><p>90 minutes / worked examples / practical investigations / independent assessment. No accounts or installs.</p></aside></div>
-<nav aria-label="Lesson stages"><button class="on" data-page="intro">00 / Introduction</button><button data-page="av">01 / Malware detector</button><button data-page="fw">02 / Firewall</button><button data-page="end">03 / Evaluate</button></nav>
-<section id="intro" class="page on"><aside class="rail">00 / INTRODUCTION<p>10 minutes</p></aside><article class="lesson"><small>FIRST PRINCIPLES</small><h2>Two different jobs.</h2><p><b>Antivirus</b> examines files and device activity to identify possible malware. A <b>firewall</b> examines network traffic and decides which connections to allow or block.</p><p>Neither guarantees safety. A firewall can allow a connection containing harmful content; antivirus may not recognise a new threat.</p><div class="note"><b>Prediction.</b> A malicious file arrives over an allowed web connection. Which tool might still detect it? Antivirus, because it examines files and device behaviour.</div><h3 class="lesson-title">Start with four important terms</h3><div class="gloss"><div><b>SIGNATURE</b><p>A recognisable pattern linked to known malware. New malware may not match an existing pattern.</p></div><div><b>HEURISTIC</b><p>A rule that identifies suspicious characteristics or behaviour without requiring an exact known signature.</p></div><div><b>FALSE POSITIVE</b><p>Legitimate software or traffic incorrectly classified as dangerous.</p></div><div><b>FALSE NEGATIVE</b><p>Dangerous software or unwanted traffic mistakenly permitted.</p></div></div><h3>First, make two decisions.</h3><div class="quiz" data-quiz="i1" data-answer="1" data-why="A false positive is a safe item incorrectly identified as malicious."><small>CHECK 01</small><p>A legitimate backup tool is incorrectly quarantined. What is this called?</p><button type="button">False negative</button><button type="button">False positive</button><button type="button">A successful infection</button><div class="result" aria-live="polite"></div></div><div class="quiz" data-quiz="i2" data-answer="0" data-why="A firewall may allow web traffic while antivirus inspects the file. They solve different problems."><small>CHECK 02</small><p>A malicious download is received through an allowed HTTPS connection. What might still detect the harmful file?</p><button type="button">Antivirus, because it can examine files and device activity</button><button type="button">Nothing, because HTTPS makes every file safe</button><button type="button">Only a CCTV camera</button><div class="result" aria-live="polite"></div></div><div class="actions"><button class="btn" onclick="go('av')">Begin experiment 01 →</button></div></article></section>
-<section id="av" class="page"><aside class="rail">01 / FILE ANALYSIS<p>35 minutes</p><p>Known signatures</p><p>Suspicious behaviour</p><p>False positives</p></aside><article class="lesson"><small>EXPERIMENT A</small><h2>What counts as suspicious?</h2><p>A <b>signature</b> is a recognisable pattern from known malware. Exact matches can miss modified threats. <b>Heuristics</b> look for suspicious behaviour, but may also flag legitimate software.</p><div class="note"><b>Experiment:</b> Run a signature-only scan. Then enable behavioural checks. Try changing the threshold and compare the mistakes.</div>
-<h3 class="lesson-title">Task 1 — How a signature works</h3><p>Imagine the antivirus has a database containing signature <code>AX-17</code>, found in a previously identified malicious program. An exact signature match is one reason to quarantine a file. This is a simplified model: real scanners use many additional techniques.</p><div class="case"><b>FILE A / invoice.exe</b><p>Signature: AX-17. Behaviour: encrypts large numbers of documents.</p></div><div class="case"><b>FILE B / photo-editor.exe</b><p>Signature: ED-02. Behaviour: edits photographs.</p></div><div class="case"><b>FILE C / new-threat.exe</b><p>Signature: ZZ-94. Behaviour: encrypts documents and changes protected settings. Its signature is not in the database.</p></div><div class="quiz" data-quiz="a1" data-answer="0" data-why="Only File A matches the known signature AX-17. File C is suspicious but its different signature is not yet recognised."><small>CHECK 03</small><p>If AX-17 is the only known signature, which file will an exact signature scan identify?</p><button type="button">File A</button><button type="button">Files A and C</button><button type="button">All three files</button><div class="result" aria-live="polite"></div></div><h3>Task 2 — Test the signature-only detector</h3><p>Use the scanner below with only <b>Match known malware signatures</b> selected. Press <b>Scan practice samples</b>, inspect the results, and identify a threat that was missed.</p><div class="quiz" data-quiz="a2" data-answer="0" data-why="Signature-based detection depends on knowing recognisable patterns. Previously unseen variants can evade exact matches."><small>CHECK 04</small><p>Why can newly modified malware evade a signature-only scanner?</p><button type="button">Because its signature may no longer match known patterns</button><button type="button">Because it cannot be transferred over a network</button><button type="button">Because antivirus detects only hardware failures</button><div class="result" aria-live="polite"></div></div><h3>Task 3 — Add behavioural evidence</h3><p>Enable suspicious behaviours in the scanner. Try the threshold at 1, then 2, then 3. Note how many threats are caught and how many safe files are mistakenly quarantined.</p><div class="tip"><b>Do not assume encryption always means malware.</b> Legitimate backup, archiving and encryption programs may also encrypt many documents. A heuristic is evidence, not proof.</div><div class="quiz" data-quiz="a3" data-answer="0" data-why="Your rule is too broad: legitimate encryption behaviour can produce false positives."><small>CHECK 05</small><p>A legitimate backup tool encrypts many files. You flag any encryption as malware. What problem is most likely?</p><button type="button">A false positive</button><button type="button">A false negative</button><button type="button">The firewall stops working</button><div class="result" aria-live="polite"></div></div><h3>Task 4 — Investigate the trade-off</h3><p>Run the <b>Unseen test</b> after changing your rules. Explain whether a more sensitive threshold caught more threats, produced more false positives, or both.</p><textarea class="write" id="avreflection" placeholder="My first configuration detected ... When I changed the threshold ... I recommend ... because ..."></textarea><h3>Task 5 — Extension</h3><p>A computer is running slowly during scans. Would you disable antivirus entirely, reduce scan frequency, or change detection settings? Give a balanced recommendation that considers security and usability.</p><div class="box"><div class="bar">INSTRUMENT A / SIMULATED FILE DETECTOR</div><div class="inside"><label><input id="sig" type="checkbox" checked> Match known malware signatures</label><label><input id="encrypt" type="checkbox"> Flag rapid encryption of many documents</label><label><input id="system" type="checkbox"> Flag changes to protected settings</label><label><input id="remote" type="checkbox"> Flag unusual outbound connections</label><p><small>Minimum suspicious behaviours needed to flag a file: <output id="n">2</output></small></p><input id="threshold" type="range" min="1" max="3" value="2" style="width:100%" oninput="n.value=this.value"><div class="actions"><button class="btn" onclick="scan(false)">Scan practice samples</button><button class="btn alt" onclick="scan(true)">Unseen test</button></div><div id="avout" aria-live="polite"></div></div></div>
-<p><b>Explain:</b> A backup utility might legitimately encrypt or modify many documents. Why can a more sensitive detector sometimes be less useful?</p><div class="actions"><button class="btn" onclick="go('fw')">Continue to firewall →</button></div></article></section>
-<section id="fw" class="page"><aside class="rail">02 / NETWORK RULES<p>30 minutes</p><p>Addresses and ports</p><p>Allow and block</p><p>Rule order</p></aside><article class="lesson"><small>EXPERIMENT B</small><h2>Who gets through?</h2><p>An <b>IP address</b> identifies a device on a network. A <b>port</b> helps identify a service. For example, HTTPS commonly uses TCP port 443; DNS often uses UDP port 53. A <b>protocol</b>, such as TCP or UDP, specifies how communication operates.</p><p>A firewall uses rules to permit or deny connections. In this simplified model, rules are checked from top to bottom; <b>the first match wins</b>. Traffic matching no rule is blocked.</p><h3 class="lesson-title">Task 1 — Read a connection</h3><div class="gloss"><div><b>IP ADDRESS</b><p>Identifies a network interface. In this exercise, source groups stand in for specific address ranges.</p></div><div><b>PORT</b><p>Identifies a network service: 443 commonly means HTTPS, 53 DNS, and 22 SSH.</p></div><div><b>PROTOCOL</b><p>Rules for communication. These examples use TCP for HTTPS and SSH, and UDP for DNS.</p></div><div><b>DEFAULT DENY</b><p>If no allow rule matches, the connection is blocked.</p></div></div><div class="quiz" data-quiz="f1" data-answer="1" data-why="HTTPS commonly uses TCP 443; SSH commonly uses TCP 22 and DNS often uses UDP 53."><small>CHECK 06</small><p>Staff need to open an HTTPS website. Which destination port should normally be allowed?</p><button type="button">22</button><button type="button">443</button><button type="button">53</button><div class="result" aria-live="polite"></div></div><h3>Task 2 — Predict the first match</h3><p>In our simplified firewall, rules are evaluated in order. The first rule that matches a connection decides the outcome. A later rule does not override it.</p><div class="output">RULE 1: ALLOW / ANY SOURCE / ANY SERVICE<br>RULE 2: DENY / EXTERNAL / SSH 22<br>DEFAULT: DENY</div><div class="quiz" data-quiz="f2" data-answer="1" data-why="The broad allow rule matches first. Rule 2 is never reached, illustrating why rule order matters."><small>CHECK 07</small><p>An external computer attempts SSH on port 22. What happens?</p><button type="button">It is blocked by rule 2</button><button type="button">It is allowed by rule 1</button><button type="button">It reaches the default deny</button><div class="result" aria-live="polite"></div></div><h3>Task 3 — Build a working firewall</h3><p>Configure the rule editor below so ordinary staff can access HTTPS (443) and DNS (53). Keep SSH (22) blocked for staff and external visitors, but allow it for the authorised administrator group, represented by the simulation as IT.</p><div class="tip">Build narrow rules, then test. A firewall that blocks every connection is not a useful business configuration.</div><h3>Task 4 — Diagnose a failure</h3><p>Use <b>Test traffic</b>. If staff web browsing fails, find the missing allow rule. If external SSH succeeds, inspect which earlier rule allowed it.</p><div class="quiz" data-quiz="f3" data-answer="0" data-why="The policy must permit necessary business services. Overly restrictive or incorrectly ordered rules can cause disruption."><small>CHECK 08</small><p>Why could a firewall prevent employees working even when it successfully blocks hostile traffic?</p><button type="button">Legitimate services may be blocked too</button><button type="button">Firewalls delete all antivirus software</button><button type="button">Every port is automatically malicious</button><div class="result" aria-live="polite"></div></div><h3>Task 5 — Run the unseen traffic</h3><p>Run <b>Unseen test</b> after improving your configuration. A successful result should permit only required traffic, not every request.</p><h3>Task 6 — Explain your configuration</h3><textarea class="write" id="fwreflection" placeholder="I allowed ports ... for ... My first test failed because ... I corrected this by ..."></textarea><div class="network"><span>COMPUTER<br>192.168.1.20</span><i></i><span>FIREWALL</span><i></i><span>NETWORK<br>SERVICE</span></div><div class="note"><b>Your task:</b> Let staff browse HTTPS and use DNS. Allow remote administration (SSH, TCP 22) from IT only. Avoid letting external hosts connect to SSH.</div>
-<div class="box"><div class="bar">INSTRUMENT B / FIRST-MATCH FIREWALL</div><div class="inside"><div class="fields"><label>Source<select id="src"><option value="staff">Staff</option><option value="it">IT</option><option value="external">External</option><option value="*">Any (*)</option></select></label><label>Destination service<select id="svc"><option value="443">HTTPS / TCP 443</option><option value="53">DNS / UDP 53</option><option value="22">SSH / TCP 22</option><option value="25">SMTP / TCP 25</option><option value="*">Any (*)</option></select></label><label>Decision<select id="decision"><option value="allow">Allow</option><option value="deny">Deny</option></select></label></div><div class="actions"><button class="btn" onclick="addRule()">Add rule</button><button class="btn alt" onclick="rules=[];renderRules()">Clear rules</button></div><div id="ruleList"></div><div class="actions"><button class="btn" onclick="testTraffic(false)">Test traffic</button><button class="btn alt" onclick="testTraffic(true)">Unseen test</button></div><div id="fwout" aria-live="polite"></div></div></div><p><b>Explain:</b> What would happen if an allow-any rule came before your SSH deny rule? Why can a firewall prevent legitimate work even if it blocks threats?</p><div class="actions"><button class="btn" onclick="go('end')">Write evaluation →</button></div></article></section>
-<section id="end" class="page"><aside class="rail">03 / EVALUATION<p>15 minutes</p><p>Use evidence</p><p>Compare limitations</p><p>Justify a recommendation</p></aside><article class="lesson"><small>INDEPENDENT WRITING / 12 MARKS</small><h2>Security has a cost.</h2><p>A company wants stricter antivirus detection and firewall rules. <b>Evaluate</b> how these changes may improve security while affecting legitimate work. Use evidence from both experiments and give a justified recommendation.</p><p>Include <b>false positives</b> (safe activity blocked), <b>false negatives</b> (threats missed), examples from your tests, and the limitations of each technology.</p><h3 class="lesson-title">Independent assessment</h3><p><b>Part A (4 marks).</b> Explain signature-based detection and one reason it may miss a new threat.</p><textarea class="write" id="explain" placeholder="Signature-based detection means ..."></textarea><p><b>Part B (4 marks).</b> A firewall permits all connections before checking a deny rule for external SSH. Explain why this is a problem and how to correct it.</p><textarea class="write" id="apply" placeholder="The first rule matches ..."></textarea><p><b>Part C (12 marks).</b> Evaluate whether the company should use strict antivirus detection and restrictive firewall rules. Consider false positives, false negatives, security benefits and disruption to work. Use your experimental results and reach a justified conclusion.</p><label for="response"><small>YOUR ANSWER</small></label><textarea id="response"></textarea><div class="actions"><button class="btn" onclick="exportWork()">Download my evidence (.txt)</button><button class="btn alt" onclick="window.print()">Print</button></div><p id="saved" class="output" aria-live="polite"></p></article></section><footer>Security, examined · A teaching simulation, not a real antivirus product or network firewall. No external libraries or tracking.</footer></main>
-<script>document.addEventListener("click",e=>{const b=e.target.closest(".quiz button");if(!b)return;const q=b.closest(".quiz"),buttons=[...q.querySelectorAll("button")],correct=buttons.indexOf(b)===Number(q.dataset.answer),out=q.querySelector(".result");out.textContent=correct?"Correct. "+q.dataset.why:"Not yet. Check the explanation and try another answer.";out.style.color=correct?"#155e49":"#973c32";buttons.forEach(x=>x.style.fontWeight=x===b?"bold":"normal")});
-const $=id=>document.getElementById(id);let rules=[],avEvidence='',fwEvidence='';
-function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id===id));document.querySelectorAll('nav button').forEach(b=>{b.classList.toggle('on',b.dataset.page===id);b.setAttribute('aria-selected',b.dataset.page===id)});window.scrollTo({top:0,behavior:'instant'})}
-document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
-const practice=[['invoice.exe',1,[0,1,1],1],['archive-tool.exe',0,[1,0,0],0],['photo-editor.exe',0,[0,0,0],0],['new-threat.exe',0,[1,1,1],1],['system-updater.exe',0,[0,1,1],0],['known-threat.exe',1,[1,0,0],1]];
-const unseen=[['finance-app.exe',0,[0,1,0],0],['variant-72.exe',0,[1,1,0],1],['trojan-legacy.exe',1,[0,0,1],1],['sync-tool.exe',0,[0,0,1],0],['ransomware-x.exe',0,[1,1,1],1],['notes.exe',0,[0,0,0],0]];
-function scan(hidden){let enabled=[$('encrypt').checked,$('system').checked,$('remote').checked],threshold=Number($('threshold').value),data=hidden?unseen:practice,tp=0,fp=0,fn=0,tn=0;let rows=data.map(([name,sig,signals,bad])=>{let score=signals.reduce((n,v,i)=>n+(v&&enabled[i]?1:0),0);let flagged=Boolean(($('sig').checked&&sig)||(score>=threshold&&score>0));if(flagged&&bad)tp++;else if(flagged)fp++;else if(bad)fn++;else tn++;return '<tr><td>'+name+'</td><td>'+(flagged?'Quarantine':'Allow')+'</td><td>'+(bad?'Threat':'Legitimate')+'</td><td>'+(flagged===!!bad?'Correct':'Error')+'</td></tr>'}).join('');$('avout').innerHTML='<table><thead><tr><th>Simulated file</th><th>Decision</th><th>Actual</th><th>Result</th></tr></thead><tbody>'+rows+'</tbody></table><p class="output">Correct threat detections: '+tp+' | Missed threats: '+fn+' | False positives: '+fp+' | Correctly allowed: '+tn+'\n'+(fp?'Some legitimate files were blocked. ':'')+(fn?'Some threats escaped detection.':'')+'</p>';avEvidence=(hidden?'Unseen':'Practice')+' antivirus test: TP '+tp+', FN '+fn+', FP '+fp+', TN '+tn}
-function addRule(){rules.push({source:$('src').value,port:$('svc').value,action:$('decision').value});renderRules()}
-function renderRules(){$('ruleList').innerHTML='<table><thead><tr><th>Priority</th><th>Source</th><th>Port</th><th>Action</th><th></th></tr></thead><tbody>'+rules.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+r.source+'</td><td>'+r.port+'</td><td>'+r.action+'</td><td><button class="btn alt" onclick="rules.splice('+i+',1);renderRules()" aria-label="Remove rule '+(i+1)+'">Remove</button></td></tr>').join('')+'</tbody></table>'}
-const packets=[['staff','443',1],['staff','53',1],['it','22',1],['external','22',0],['staff','22',0],['external','443',0]];
-const hiddenPackets=[['it','443',1],['it','53',1],['external','22',0],['staff','25',0],['staff','443',1],['external','53',0]];
-function testTraffic(hidden){let data=hidden?hiddenPackets:packets,correct=0,rows=data.map(([source,port,expected])=>{let found=rules.find(r=>(r.source===source||r.source==='*')&&(r.port===port||r.port==='*')),allowed=found?.action==='allow';if(allowed===!!expected)correct++;return '<tr><td>'+source+'</td><td>'+port+'</td><td>'+(allowed?'Allow':'Block')+'</td><td>'+(expected?'Required':'Not required')+'</td><td>'+(allowed===!!expected?'Correct':'Error')+'</td></tr>'}).join('');$('fwout').innerHTML='<table><thead><tr><th>Source</th><th>Port</th><th>Result</th><th>Expected</th><th>Assessment</th></tr></thead><tbody>'+rows+'</tbody></table><p class="output">'+correct+' of '+data.length+' decisions correct. Rules are evaluated top-to-bottom; unmatched traffic is blocked. The business expects only specified essential connections.</p>';fwEvidence=(hidden?'Unseen':'Practice')+' firewall test: '+correct+'/'+data.length}
-function exportWork(){let txt='SECURITY, EXAMINED — STUDENT EVIDENCE\n\nANTIVIRUS\n'+avEvidence+'\n\nFIREWALL RULES\n'+rules.map((r,i)=>(i+1)+'. '+r.source+' '+r.port+' '+r.action).join('\n')+'\n'+fwEvidence+'\n\nANTIVIRUS REFLECTION\n'+($('avreflection')?.value||'')+'\n\nFIREWALL REFLECTION\n'+($('fwreflection')?.value||'')+'\n\nEXPLAIN\n'+($('explain')?.value||'')+'\n\nAPPLY\n'+($('apply')?.value||'')+'\n\nEVALUATION\n'+$('response').value;let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));a.download='security-lab-evidence.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);$('saved').textContent='Evidence file prepared.'}
-</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Security Bench — how antivirus and firewalls actually decide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --paper:#EFF0EA;
+    --bench:#E4E6DD;
+    --panel:#F6F6F1;
+    --ink:#18233A;
+    --ink-soft:#55606F;
+    --ink-faint:#8A93A0;
+    --allow:#2F6B4F;
+    --allow-wash:#E2ECE4;
+    --block:#9E3B2A;
+    --block-wash:#F0E1DC;
+    --amber:#C8891C;
+    --amber-wash:#F4E9CF;
+    --rule:#CDCDC0;
+    --rule-firm:#B4B6A8;
+    --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+    --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+    --maxw:960px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px)}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:17px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px}
+  p{margin:0 0 1em}
+  .lede, .teach p, .teach li{font-family:var(--serif); font-size:1.075rem; line-height:1.62; color:#20293d}
+  .teach{max-width:64ch}
+  .teach h3{margin:1.4em 0 .4em}
+  .teach ul{margin:0 0 1em; padding-left:1.1em}
+  .teach li{margin:.2em 0}
+  mark{background:var(--amber-wash); color:inherit; padding:.02em .18em; border-radius:1px}
+  code,.mono{font-family:var(--mono); font-size:.92em}
+
+  /* ---------- top bar / progress spine ---------- */
+  header.bar{
+    position:sticky; top:0; z-index:20; background:rgba(239,240,234,.9);
+    backdrop-filter:saturate(1.1) blur(6px); border-bottom:1px solid var(--rule);
+    padding-top:env(safe-area-inset-top,0px);
+  }
+  body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); background:var(--paper); z-index:30}
+  .bar-inner{max-width:var(--maxw); margin:0 auto; padding:10px 24px; display:flex; align-items:center; gap:18px}
+  .brand{font-weight:700; letter-spacing:-.01em; font-size:.98rem; white-space:nowrap}
+  .brand b{color:var(--ink)}
+  .brand span{color:var(--ink-faint); font-weight:500}
+  .spine{display:flex; gap:4px; flex:1; min-width:0; overflow:hidden}
+  .spine .seg{flex:1; height:4px; background:var(--rule-firm); border-radius:2px; opacity:.5}
+  .spine .seg.on{opacity:1; background:var(--ink)}
+  .spine .seg.part-av.on{background:var(--allow)}
+  .spine .seg.part-fw.on{background:var(--ink)}
+  .stepno{font-family:var(--mono); font-size:.8rem; color:var(--ink-soft); white-space:nowrap}
+
+  /* ---------- screens ---------- */
+  main{padding:40px 0 120px}
+  .screen{display:none; animation:fade .32s ease both}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+  @media (prefers-reduced-motion:reduce){.screen{animation:none} @keyframes fade{}}
+
+  .kicker{font-family:var(--mono); font-size:.82rem; color:var(--ink-soft); margin-bottom:.5rem}
+  .kicker b{color:var(--allow); font-weight:600}
+  .kicker.fw b{color:var(--ink)}
+  h1{font-size:clamp(2.1rem,5vw,3.2rem); line-height:1.04; letter-spacing:-.02em; font-weight:700; margin:.1em 0 .3em}
+  h2{font-size:clamp(1.5rem,3.4vw,2.1rem); line-height:1.1; letter-spacing:-.015em; margin:.1em 0 .5em}
+  h3{font-size:1.12rem; letter-spacing:-.01em; margin:0 0 .3em}
+
+  /* ---------- cover ---------- */
+  .cover{min-height:min(76vh,640px); display:flex; flex-direction:column; justify-content:center}
+  .cover h1{max-width:16ch}
+  .cover .q{color:var(--ink)}
+  .cover .lede{max-width:52ch; color:var(--ink-soft); font-style:italic}
+  .demo{margin:30px 0 34px; border:1px solid var(--rule-firm); background:var(--panel); border-radius:3px; overflow:hidden; max-width:560px}
+  .demo-row{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:0}
+  .demo-cell{padding:16px 18px}
+  .demo-cell.spec{border-right:1px solid var(--rule)}
+  .demo-cell.inst{border-left:1px solid var(--rule); text-align:right}
+  .demo-gate{width:46px; display:flex; align-items:center; justify-content:center; align-self:stretch; color:var(--ink-faint)}
+  .demo small{display:block; color:var(--ink-faint); font-family:var(--mono); font-size:.72rem; margin-bottom:3px}
+  .demo .val{font-family:var(--mono); font-size:.95rem; color:var(--ink)}
+  .demo-foot{border-top:1px solid var(--rule); padding:12px 18px; display:flex; align-items:center; justify-content:space-between; background:#fff}
+  .demo-foot .lab{font-size:.85rem; color:var(--ink-soft)}
+
+  /* ---------- buttons ---------- */
+  .btn{font-family:var(--sans); font-weight:600; font-size:1rem; border:1px solid var(--ink); background:var(--ink); color:#fff;
+    padding:11px 20px; border-radius:3px; cursor:pointer; transition:background .15s,transform .04s}
+  .btn:hover{background:#0f1830}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent; color:var(--ink)}
+  .btn.ghost:hover{background:#e3e4dc}
+  .btn.small{padding:7px 13px; font-size:.9rem}
+  .btn:disabled{opacity:.4; cursor:not-allowed}
+  .btn:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2.5px solid var(--amber); outline-offset:2px}
+  .nav{display:flex; align-items:center; gap:12px; margin-top:40px; padding-top:22px; border-top:1px solid var(--rule)}
+  .nav .spacer{flex:1}
+  .link{background:none; border:none; color:var(--ink-soft); font-family:var(--sans); font-size:.92rem; cursor:pointer; text-decoration:underline; text-underline-offset:3px; padding:6px}
+  .link:hover{color:var(--ink)}
+
+  /* ---------- bench layout ---------- */
+  .bench{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:22px 0; align-items:start}
+  @media(max-width:760px){.bench{grid-template-columns:1fr}}
+  .panel{background:var(--panel); border:1px solid var(--rule-firm); border-radius:3px}
+  .panel.inset{background:var(--bench)}
+  .panel-h{padding:11px 16px; border-bottom:1px solid var(--rule); font-size:.82rem; color:var(--ink-soft); display:flex; justify-content:space-between; align-items:center}
+  .panel-h .tag{font-family:var(--mono); font-size:.74rem; color:var(--ink-faint)}
+  .panel-b{padding:16px}
+
+  /* ---------- specimen (file) cards ---------- */
+  .spec-list{display:flex; flex-direction:column; gap:10px}
+  .file{border:1px solid var(--rule); border-left:3px solid var(--rule-firm); border-radius:2px; background:#fff; padding:11px 13px}
+  .file .fname{font-family:var(--mono); font-size:.9rem; font-weight:500; word-break:break-all}
+  .file .props{margin-top:7px; display:flex; flex-wrap:wrap; gap:5px}
+  .prop{font-size:.76rem; background:var(--bench); border:1px solid var(--rule); color:var(--ink-soft); padding:2px 7px; border-radius:10px}
+  .prop.sig{font-family:var(--mono); background:#fff}
+  .file .verdict-line{margin-top:9px; padding-top:9px; border-top:1px dashed var(--rule); font-size:.84rem; display:none}
+  .file.scored .verdict-line{display:block}
+  .file.r-tp{border-left-color:var(--allow)}
+  .file.r-tn{border-left-color:var(--allow)}
+  .file.r-fn{border-left-color:var(--block)}
+  .file.r-fp{border-left-color:var(--amber)}
+  .outcome{font-weight:600; font-family:var(--mono); font-size:.78rem; letter-spacing:.02em}
+  .outcome.ok{color:var(--allow)}
+  .outcome.bad{color:var(--block)}
+  .outcome.warn{color:var(--amber)}
+  .vreason{color:var(--ink-soft); margin-top:3px; font-family:var(--serif); font-size:.92rem}
+
+  /* ---------- stamp ---------- */
+  .stamp{display:inline-block; font-family:var(--sans); font-weight:700; font-size:.76rem; letter-spacing:.09em;
+    text-transform:uppercase; padding:3px 9px; border:2px solid currentColor; border-radius:3px; transform:rotate(-1.5deg)}
+  .stamp.clean,.stamp.allow{color:var(--allow)}
+  .stamp.threat,.stamp.block{color:var(--block)}
+  .stamp.neutral{color:var(--ink-faint)}
+
+  /* ---------- instrument controls ---------- */
+  .ctl{margin-bottom:16px}
+  .ctl:last-child{margin-bottom:0}
+  .ctl label.h{display:block; font-weight:600; font-size:.92rem; margin-bottom:4px}
+  .ctl .hint{font-size:.84rem; color:var(--ink-soft); margin-bottom:8px; font-family:var(--serif)}
+  .toggle-list{display:flex; flex-direction:column; gap:6px}
+  .tog{display:flex; align-items:flex-start; gap:9px; padding:8px 10px; border:1px solid var(--rule); border-radius:2px; background:#fff; cursor:pointer}
+  .tog:hover{border-color:var(--rule-firm)}
+  .tog input{margin-top:3px; accent-color:var(--ink); width:16px; height:16px; flex:none}
+  .tog .t-main{font-size:.9rem}
+  .tog .t-sub{font-size:.78rem; color:var(--ink-faint)}
+  .tog.sel{background:var(--amber-wash); border-color:var(--amber)}
+  .sliderbox{display:flex; align-items:center; gap:12px}
+  input[type=range]{flex:1; accent-color:var(--ink)}
+  .thresh-val{font-family:var(--mono); font-weight:600; font-size:1.3rem; min-width:1.6em; text-align:center}
+  .switch{display:inline-flex; align-items:center; gap:8px; cursor:pointer; font-size:.9rem}
+  .switch input{width:16px;height:16px; accent-color:var(--ink)}
+
+  /* ---------- metrics readout ---------- */
+  .readout{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--rule); border:1px solid var(--rule-firm); border-radius:3px; overflow:hidden; margin:18px 0}
+  @media(max-width:620px){.readout{grid-template-columns:repeat(2,1fr)}}
+  .metric{background:var(--panel); padding:13px 14px}
+  .metric .n{font-family:var(--mono); font-size:1.5rem; font-weight:600; line-height:1}
+  .metric .l{font-size:.76rem; color:var(--ink-soft); margin-top:5px}
+  .metric.good .n{color:var(--allow)}
+  .metric.bad .n{color:var(--block)}
+
+  /* ---------- quiz check ---------- */
+  .check{border:1px solid var(--rule-firm); border-radius:3px; background:var(--panel); padding:16px 18px; margin:22px 0; max-width:64ch}
+  .check .cq{font-weight:600; margin-bottom:11px}
+  .opt{display:block; width:100%; text-align:left; border:1px solid var(--rule); background:#fff; border-radius:2px; padding:10px 13px;
+    margin-bottom:8px; cursor:pointer; font-family:var(--sans); font-size:.95rem; color:var(--ink); transition:border-color .12s}
+  .opt:hover{border-color:var(--rule-firm)}
+  .opt.correct{border-color:var(--allow); background:var(--allow-wash)}
+  .opt.wrong{border-color:var(--block); background:var(--block-wash)}
+  .opt:disabled{cursor:default}
+  .cfx{font-size:.9rem; font-family:var(--serif); margin-top:6px; display:none}
+  .cfx.show{display:block}
+  .cfx.ok{color:var(--allow)}
+  .cfx.no{color:var(--block)}
+
+  /* ---------- firewall workbench ---------- */
+  .fieldcards{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin:18px 0}
+  @media(max-width:620px){.fieldcards{grid-template-columns:1fr}}
+  .fcard{border:1px solid var(--rule-firm); border-radius:3px; background:var(--panel); padding:14px; cursor:pointer}
+  .fcard:hover{background:#fff}
+  .fcard .port{font-family:var(--mono); font-size:1.15rem; font-weight:600}
+  .fcard .svc{font-weight:600; margin:2px 0}
+  .fcard .desc{font-size:.84rem; color:var(--ink-soft); font-family:var(--serif); display:none}
+  .fcard.open .desc{display:block; margin-top:6px}
+
+  .rulebuilder{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px}
+  select{font-family:var(--sans); font-size:.9rem; padding:8px 10px; border:1px solid var(--rule-firm); border-radius:2px; background:#fff; color:var(--ink)}
+  .rules{border:1px solid var(--rule-firm); border-radius:3px; overflow:hidden; margin:10px 0}
+  .rrow{display:grid; grid-template-columns:28px 1fr auto; gap:0; align-items:center; border-bottom:1px solid var(--rule); background:#fff}
+  .rrow:last-child{border-bottom:none}
+  .rrow .ri{font-family:var(--mono); font-size:.8rem; color:var(--ink-faint); text-align:center; padding:10px 0; background:var(--bench); align-self:stretch; display:flex; align-items:center; justify-content:center}
+  .rrow .rtxt{padding:9px 12px; font-size:.88rem}
+  .rrow .rtxt .mono{color:var(--ink-soft)}
+  .rrow .ract{padding:0 10px; display:flex; gap:4px}
+  .rrow.deny .rtag{color:var(--block)}
+  .rrow.allow .rtag{color:var(--allow)}
+  .rtag{font-family:var(--mono); font-size:.75rem; font-weight:600}
+  .default-rule{background:var(--bench); color:var(--ink-soft); font-size:.84rem; padding:9px 12px; font-style:italic; font-family:var(--serif)}
+  .iconbtn{border:1px solid var(--rule); background:#fff; border-radius:2px; width:26px; height:26px; cursor:pointer; color:var(--ink-soft); font-size:.9rem; line-height:1; padding:0}
+  .iconbtn:hover{border-color:var(--rule-firm); color:var(--ink)}
+
+  .traffic{display:flex; flex-direction:column; gap:8px; margin-top:6px}
+  .pkt{border:1px solid var(--rule); border-left:3px solid var(--rule-firm); border-radius:2px; background:#fff; padding:10px 12px; font-size:.88rem}
+  .pkt .pwhat{font-weight:500}
+  .pkt .pmeta{font-family:var(--mono); font-size:.78rem; color:var(--ink-soft); margin-top:2px}
+  .pkt .pres{margin-top:7px; padding-top:7px; border-top:1px dashed var(--rule); font-size:.82rem; display:none}
+  .pkt.scored .pres{display:block}
+  .pkt.p-ok{border-left-color:var(--allow)}
+  .pkt.p-bad{border-left-color:var(--block)}
+  .pkt.p-note{border-left-color:var(--amber)}
+
+  /* ---------- callout ---------- */
+  .callout{border-left:3px solid var(--amber); background:var(--amber-wash); padding:13px 16px; border-radius:0 3px 3px 0; margin:20px 0; max-width:64ch}
+  .callout .ch{font-weight:600; font-size:.88rem; margin-bottom:3px}
+  .callout p{margin:0; font-family:var(--serif); font-size:.95rem; color:#3a3326}
+  .note{font-size:.84rem; color:var(--ink-faint); font-family:var(--serif); font-style:italic}
+
+  /* ---------- evaluation ---------- */
+  .evalgrid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:22px 0}
+  @media(max-width:700px){.evalgrid{grid-template-columns:1fr}}
+  table.sum{width:100%; border-collapse:collapse; font-size:.9rem; margin:8px 0}
+  table.sum th,table.sum td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--rule)}
+  table.sum th{font-size:.76rem; color:var(--ink-soft); font-weight:600}
+  table.sum td.v{font-family:var(--mono)}
+  .examq{border:1px solid var(--ink); border-radius:3px; padding:18px 20px; margin:22px 0; background:var(--panel)}
+  .examq .marks{font-family:var(--mono); font-size:.8rem; color:var(--block); float:right}
+  .examq h3{margin-bottom:8px}
+  .examq .qtext{font-family:var(--serif); font-size:1.08rem; line-height:1.55}
+  .scaffold{font-size:.9rem; color:var(--ink-soft)}
+  .scaffold li{margin:.3em 0}
+  textarea.copybox{width:100%; min-height:150px; font-family:var(--mono); font-size:.8rem; border:1px solid var(--rule-firm); border-radius:3px; padding:12px; background:#fff; color:var(--ink); resize:vertical; line-height:1.5}
+
+  .pill{display:inline-block; font-size:.74rem; font-family:var(--mono); color:var(--ink-soft); border:1px solid var(--rule-firm); border-radius:10px; padding:1px 8px; margin-left:8px; vertical-align:middle}
+  .toasthint{font-size:.85rem; color:var(--ink-faint); margin-top:10px; font-family:var(--serif); font-style:italic; min-height:1.2em}
+  .teachinghead{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
+  hr.soft{border:none; border-top:1px solid var(--rule); margin:26px 0}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:.78rem; color:var(--ink-soft); margin-top:10px}
+  .legend b{font-weight:600}
+  .swatch{display:inline-block; width:10px; height:10px; border-radius:2px; vertical-align:middle; margin-right:4px}
+
+  @media print{
+    header.bar{display:none}
+    .nav{display:none}
+    body{background:#fff}
+    .screen{animation:none}
+    textarea.copybox{min-height:auto; border-color:var(--rule)}
+  }
+ .mini-field{display:flex;flex-direction:column;gap:5px;min-width:130px;color:var(--ink-soft);font-size:.75rem}.mini-field select{max-width:175px}.rulebuilder{align-items:end}.rulebuilder>select{align-self:end}.rrow .rtxt{overflow-wrap:anywhere}@media(max-width:620px){.mini-field{min-width:calc(50% - 8px);flex:1}.mini-field select{max-width:none}} </style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-inner">
+    <div class="brand"><b>The Security Bench</b> <span>&nbsp;/&nbsp;antivirus &amp; firewalls</span></div>
+    <div class="spine" id="spine" aria-hidden="true"></div>
+    <div class="stepno" id="stepno"></div>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+<!-- ======================= COVER ======================= -->
+<section class="screen active cover" data-screen="cover" data-part="intro">
+  <div class="kicker">A hands-on lesson &middot; no prior knowledge needed</div>
+  <h1><span class="q">Trust is conditional.</span></h1>
+  <p class="lede">Two security tools, two different jobs. Investigate their evidence, build rules you can justify, and find out which threats your defences still miss.</p>
+
+  <div class="demo" aria-hidden="true">
+    <div class="demo-row">
+      <div class="demo-cell spec">
+        <small>specimen</small>
+        <div class="val">invoice_update.exe</div>
+      </div>
+      <div class="demo-gate">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <div class="demo-cell inst">
+        <small>your rule</small>
+        <div class="val">3+ warning signs</div>
+      </div>
+    </div>
+    <div class="demo-foot">
+      <span class="lab">Encrypts many files, changes system files, calls an outside server.</span>
+      <span class="stamp threat">Threat</span>
+    </div>
+  </div>
+
+  <div class="nav" style="border-top:none; padding-top:0; margin-top:8px">
+    <button class="btn" onclick="go(1)">Open the bench</button>
+    <span class="note">Works in the browser. Nothing is installed and no real files are scanned.</span>
+  </div>
+</section>
+
+<!-- ======================= ORIENTATION ======================= -->
+<section class="screen" data-screen="orient" data-part="intro">
+  <div class="kicker">Before you build &middot; two different jobs</div>
+  <h2>A firewall and an antivirus are not the same tool</h2>
+  <div class="teach">
+    <p>People lump them together as "security software," but they watch for completely different things, and neither can do the other's job.</p>
+  </div>
+
+  <div class="bench">
+    <div class="panel">
+      <div class="panel-h">Antivirus <span class="tag">examines files</span></div>
+      <div class="panel-b teach">
+        <p style="margin-bottom:0">Antivirus software scans files and observes activity on a device. It may inspect downloads, attachments, processes and changes to files, and decide whether to alert or quarantine. Its question is: <em>"is this thing dangerous?"</em></p>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-h">Firewall <span class="tag">examines traffic</span></div>
+      <div class="panel-b teach">
+        <p style="margin-bottom:0">Firewalls can run on devices or at network boundaries. In this lab, the firewall examines addresses, protocols, ports and connection direction. Some real products can inspect application traffic too. Its question is: <em>"should this connection be allowed through?"</em></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="check" id="chk-orient">
+    <div class="cq">A member of staff downloads a file that turns out to be malware. Which tool is designed to catch the file itself?</div>
+    <button class="opt" data-ok="1">The antivirus — it inspects files on the computer.</button>
+    <button class="opt">The firewall — it blocks all dangerous files.</button>
+    <button class="opt">Both do exactly the same checking.</button>
+    <div class="cfx"></div>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(0)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" onclick="go(2)">Start the antivirus lab</button>
+  </div>
+</section>
+
+<!-- ======================= AV 1: SIGNATURES ======================= -->
+<section class="screen" data-screen="av1" data-part="av">
+  <div class="kicker"><b>Antivirus lab</b> &middot; stage 1 of 5</div>
+  <h2>Catching malware by its fingerprint</h2>
+  <div class="teach">
+    <p>Some known malware can be recognised using a <strong>signature</strong> — think of it as a fingerprint taken from the file's contents. An antivirus keeps a list of these fingerprints. When it scans a file, it checks: <em>does this file's fingerprint match anything on the wanted list?</em></p>
+    <p>Below is your detector. Right now it only knows how to do one thing: match fingerprints against its small database. Scan the files and see what it catches.</p>
+  </div>
+
+  <div class="panel inset" style="margin:14px 0">
+    <div class="panel-h">Known-malware fingerprints <span class="tag">signature database</span></div>
+    <div class="panel-b">
+      <div class="props" id="sigdb"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-h">Files waiting to be scanned <span class="tag" id="av1-tag">6 files</span></div>
+    <div class="panel-b">
+      <div class="spec-list" id="av1-files"></div>
+      <div style="margin-top:14px; display:flex; gap:10px; align-items:center">
+        <button class="btn" id="av1-scan">Scan these files</button>
+        <span class="toasthint" id="av1-hint"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" id="av1-after" style="display:none">
+    <div class="ch">What just happened</div>
+    <p>Exact matches can efficiently recognise known threats, although real-world signature detection can still make errors. But look at <code>invoice_update.exe</code> — clearly doing damage, yet it sailed through. Its fingerprint simply wasn't on the list. That's the weakness we'll attack next.</p>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(1)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" id="av1-next" disabled onclick="go(3)">Next: what attackers do about this</button>
+  </div>
+</section>
+
+<!-- ======================= AV 2: VARIANTS ======================= -->
+<section class="screen" data-screen="av2" data-part="av">
+  <div class="kicker"><b>Antivirus lab</b> &middot; stage 2 of 5</div>
+  <h2>Change one byte, change the fingerprint</h2>
+  <div class="teach">
+    <p>Attackers know their malware is on the wanted list, so they make a tiny change to the file. It behaves <em>exactly</em> the same, but the fingerprint is now different — and a different fingerprint doesn't match. These near-identical copies are called <strong>variants</strong>.</p>
+    <p>Here are three files. Two are brand-new variants of malware you caught a moment ago. Run the same fingerprint scanner again.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-h">A fresh batch <span class="tag">same detector, new files</span></div>
+    <div class="panel-b">
+      <div class="spec-list" id="av2-files"></div>
+      <div style="margin-top:14px; display:flex; gap:10px; align-items:center">
+        <button class="btn" id="av2-scan">Scan with fingerprints</button>
+        <span class="toasthint" id="av2-hint"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" id="av2-after" style="display:none">
+    <div class="ch">Why this matters</div>
+    <p>Fingerprint matching can only catch what it has already seen. Against a changed copy it is helpless — and attackers can generate thousands of variants automatically. To catch these, your detector has to stop asking "have I seen this exact file?" and start asking "is this file <em>behaving</em> like malware?"</p>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(2)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" id="av2-next" disabled onclick="go(4)">Next: teach it to watch behaviour</button>
+  </div>
+</section>
+
+<!-- ======================= AV 3: HEURISTICS ======================= -->
+<section class="screen" data-screen="av3" data-part="av">
+  <div class="kicker"><b>Antivirus lab</b> &middot; stage 3 of 5</div>
+  <h2>Judging a file by what it does</h2>
+  <div class="teach">
+    <p>Instead of matching exact files, a modern antivirus watches for <strong>suspicious behaviour</strong>. On their own, each of these actions can be innocent — but the more of them a single file does, the more suspicious it looks. This is called <strong>heuristic</strong> detection: a rule of thumb rather than a certain match.</p>
+    <p>You decide the policy. Tick which behaviours you think are warning signs, then set how many a file must show before you flag it.</p>
+  </div>
+
+  <div class="bench">
+    <div class="panel">
+      <div class="panel-h">Your detection policy <span class="tag">the instrument</span></div>
+      <div class="panel-b">
+        <div class="ctl">
+          <label class="h">Which actions count as a warning sign?</label>
+          <div class="hint">Tick every behaviour you want your detector to watch for.</div>
+          <div class="toggle-list" id="behav-list"></div>
+        </div>
+        <div class="ctl">
+          <label class="h">How many warning signs before you flag a file?</label>
+          <div class="hint">A low number is suspicious of everything; a high number lets more slip past.</div>
+          <div class="sliderbox">
+            <input type="range" id="thresh" min="1" max="4" value="2" aria-label="warning-sign threshold">
+            <span class="thresh-val" id="thresh-val">2</span>
+          </div>
+        </div>
+        <label class="switch"><input type="checkbox" id="use-sig" checked> Also keep using the fingerprint database</label>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-h">Files to judge <span class="tag">the specimens</span></div>
+      <div class="panel-b">
+        <div class="spec-list" id="av3-files"></div>
+        <div style="margin-top:14px; display:flex; gap:10px; align-items:center">
+          <button class="btn" id="av3-scan">Run my detector</button>
+          <span class="toasthint" id="av3-hint"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="readout" id="av3-read" style="display:none">
+    <div class="metric good"><div class="n" id="av3-tp">0</div><div class="l">Malware caught</div></div>
+    <div class="metric bad"><div class="n" id="av3-fn">0</div><div class="l">Malware missed</div></div>
+    <div class="metric"><div class="n" id="av3-tn">0</div><div class="l">Safe files allowed</div></div>
+    <div class="metric bad"><div class="n" id="av3-fp">0</div><div class="l">False alarms</div></div>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(3)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" id="av3-next" disabled onclick="go(5)">Next: the false-alarm problem</button>
+  </div>
+</section>
+
+<!-- ======================= AV 4: FALSE POSITIVES ======================= -->
+<section class="screen" data-screen="av4" data-part="av">
+  <div class="kicker"><b>Antivirus lab</b> &middot; stage 4 of 5</div>
+  <h2>When honest software looks guilty</h2>
+  <div class="teach">
+    <p>Here's the catch nobody expects. A legitimate <strong>backup tool</strong> also encrypts many documents. A genuine <strong>installer</strong> also changes system files. A <strong>cloud sync</strong> app also sends data to an outside server. Your heuristics can't tell intent — they only see behaviour.</p>
+    <p>When your detector blocks an innocent file, that's a <strong>false alarm</strong> (a false positive). Too many of these and staff can't do their jobs, so they start switching the antivirus off — which is worse than having none. Re-tune your policy with real software in the mix.</p>
+  </div>
+
+  <div class="bench">
+    <div class="panel">
+      <div class="panel-h">Your detection policy <span class="tag">adjust and re-run</span></div>
+      <div class="panel-b">
+        <div class="ctl">
+          <label class="h">Warning signs you watch for</label>
+          <div class="toggle-list" id="behav-list-2"></div>
+        </div>
+        <div class="ctl">
+          <label class="h">Threshold to flag</label>
+          <div class="sliderbox">
+            <input type="range" id="thresh2" min="1" max="4" value="2" aria-label="warning-sign threshold">
+            <span class="thresh-val" id="thresh-val2">2</span>
+          </div>
+        </div>
+        <label class="switch"><input type="checkbox" id="use-sig2" checked> Keep using the fingerprint database</label>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-h">Mixed files <span class="tag">malware + real software</span></div>
+      <div class="panel-b">
+        <div class="spec-list" id="av4-files"></div>
+        <div style="margin-top:14px; display:flex; gap:10px; align-items:center">
+          <button class="btn" id="av4-scan">Run my detector</button>
+          <span class="toasthint" id="av4-hint"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="readout" id="av4-read" style="display:none">
+    <div class="metric good"><div class="n" id="av4-tp">0</div><div class="l">Malware caught</div></div>
+    <div class="metric bad"><div class="n" id="av4-fn">0</div><div class="l">Malware missed</div></div>
+    <div class="metric"><div class="n" id="av4-tn">0</div><div class="l">Safe files allowed</div></div>
+    <div class="metric bad"><div class="n" id="av4-fp">0</div><div class="l">False alarms</div></div>
+  </div>
+  <div class="callout" id="av4-after" style="display:none">
+    <div class="ch">The trade-off you just felt</div>
+    <p id="av4-after-txt"></p>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(4)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" id="av4-next" disabled onclick="go(6)">Final test: files you've never seen</button>
+  </div>
+</section>
+
+<!-- ======================= AV 5: UNSEEN TEST ======================= -->
+<section class="screen" data-screen="av5" data-part="av">
+  <div class="kicker"><b>Antivirus lab</b> &middot; stage 5 of 5</div>
+  <h2>The real test: can it handle the unknown?</h2>
+  <div class="teach">
+    <p>Catching files you've already studied proves nothing — you could just memorise the answers. A detector only earns trust when it faces files it has never encountered. Your current policy is locked in. Run it against six completely new files and see how it does.</p>
+  </div>
+
+  <div class="panel inset" style="margin-bottom:14px">
+    <div class="panel-h">Policy under test <span class="tag">from stage 4</span></div>
+    <div class="panel-b" id="av5-policy" style="font-size:.88rem; color:var(--ink-soft)"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-h">Unseen files <span class="tag">6 new specimens</span></div>
+    <div class="panel-b">
+      <div class="spec-list" id="av5-files"></div>
+      <div style="margin-top:14px"><button class="btn" id="av5-scan">Run the unseen test</button></div>
+    </div>
+  </div>
+
+  <div class="readout" id="av5-read" style="display:none">
+    <div class="metric good"><div class="n" id="av5-tp">0</div><div class="l">Malware caught</div></div>
+    <div class="metric bad"><div class="n" id="av5-fn">0</div><div class="l">Malware missed</div></div>
+    <div class="metric"><div class="n" id="av5-tn">0</div><div class="l">Safe files allowed</div></div>
+    <div class="metric bad"><div class="n" id="av5-fp">0</div><div class="l">False alarms</div></div>
+  </div>
+  <div id="av5-verdict" style="display:none" class="teach"></div>
+
+  <div class="nav">
+    <button class="link" onclick="go(5)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" id="av5-next" disabled onclick="go(7)">Move to the firewall lab</button>
+  </div>
+</section>
+
+<!-- ======================= FW 1: WHAT IS A FIREWALL ======================= -->
+<section class="screen" data-screen="fw1" data-part="fw">
+  <div class="kicker fw"><b>Firewall lab</b> &middot; stage 1 of 5</div>
+  <h2>The gate at the edge of the network</h2>
+  <div class="teach">
+    <p>Every time a computer talks to the internet — loading a website, sending an email, syncing a file — a <strong>connection</strong> is made. A firewall is the gate every connection has to pass through. For each one it makes a single yes-or-no decision: <strong>allow</strong> it, or <strong>block</strong> it.</p>
+    <p>It doesn't open files or remove viruses. It only controls which connections are permitted. The skill is deciding what to let through without accidentally blocking the things the business needs.</p>
+  </div>
+
+  <div class="check" id="chk-fw1">
+    <div class="cq">What does a firewall actually decide?</div>
+    <button class="opt" data-ok="1">Whether each network connection is allowed through or blocked.</button>
+    <button class="opt">Which files on the hard drive contain viruses.</button>
+    <button class="opt">How to encrypt the documents on a computer.</button>
+    <div class="cfx"></div>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(6)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" onclick="go(8)">Next: what a firewall can see</button>
+  </div>
+</section>
+
+<!-- ======================= FW 2: FIELDS ======================= -->
+<section class="screen" data-screen="fw2" data-part="fw">
+  <div class="kicker fw"><b>Firewall lab</b> &middot; stage 2 of 5</div>
+  <h2>What the gate can actually see</h2>
+  <div class="teach">
+    <p>Our teaching firewall uses connection metadata rather than inspecting content. Real firewalls vary: some check only network/transport information while others inspect applications and connection state. These fields determine the outcome in our model:</p>
+    <h3>The port — which service might this be?</h3>
+    <p>Services commonly use particular <strong>port numbers</strong>. A port offers a clue about the service, but it does not prove what a connection is doing. Tap each one to see what it's for.</p>
+  </div>
+
+  <div class="fieldcards" id="portcards"></div>
+
+  <div class="teach">
+    <h3>The direction — who started it?</h3>
+    <p><strong>Outbound</strong> means someone inside the company reached out (staff loading a website). <strong>Inbound</strong> means someone outside is trying to reach in. Unexpected inbound connections are the ones to be nervous about.</p>
+    <h3>The protocol — TCP or UDP?</h3>
+    <p>Just two delivery methods. <strong>TCP</strong> is used for most things where every bit must arrive (web, email). <strong>UDP</strong> is a lighter, faster method used for quick lookups. You rarely need more than the name.</p>
+  </div>
+
+  <div class="check" id="chk-fw2">
+    <div class="cq">A connection is heading <em>out</em> to port <code>443</code>. What is most likely happening?</div>
+    <button class="opt" data-ok="1">A member of staff is loading a secure website.</button>
+    <button class="opt">Someone outside is attacking the server.</button>
+    <button class="opt">A file is being deleted from the hard drive.</button>
+    <div class="cfx"></div>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(7)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" onclick="go(9)">Next: write your first rules</button>
+  </div>
+</section>
+
+<!-- ======================= FW 3: BUILD RULES ======================= -->
+<section class="screen" data-screen="fw3" data-part="fw">
+  <div class="kicker fw"><b>Firewall lab</b> &middot; stage 3 of 5</div>
+  <h2>Write the rules, then watch the traffic</h2>
+  <div class="teach">
+    <p>A firewall is just an ordered list of <strong>rules</strong>. Each rule says: <em>for this kind of connection, allow or block</em>. The crucial part is the order — the firewall reads top to bottom and <strong>stops at the first rule that matches</strong>. Anything no rule matches is blocked by default.</p>
+    <p>Your task: let staff browse, resolve addresses and submit mail; allow authorised IT access to the server over SSH but block outsiders. Configure each rule's source, destination, direction, protocol and port. Add rules in plain language — you'll see the real firewall version appear in the list.</p>
+  </div>
+
+  <div class="bench">
+    <div class="panel">
+      <div class="panel-h">Rule builder <span class="tag">add to the list</span></div>
+      <div class="panel-b">
+        <div class="rulebuilder">
+          <select id="rb-action">
+            <option value="allow">Allow</option>
+            <option value="deny">Block</option>
+          </select>
+          <select id="rb-service"></select><label class="mini-field">Source <select id="rb-source"><option value="staff">Staff</option><option value="it">Authorised IT</option><option value="external">Outside</option><option value="*">Any</option></select></label><label class="mini-field">Destination <select id="rb-target"><option value="internet">Internet</option><option value="resolver">DNS resolver</option><option value="mail">Mail relay</option><option value="server">Company server</option><option value="*">Any</option></select></label><label class="mini-field">Direction <select id="rb-dir"><option value="out">Outbound</option><option value="in">Inbound</option></select></label><label class="mini-field">Protocol <select id="rb-proto"><option value="TCP">TCP</option><option value="UDP">UDP</option></select></label>
+          <button class="btn small" id="rb-add">Add rule</button>
+        </div>
+        <div class="note">Rules are checked from the top down. Drag isn't needed — use the arrows to reorder.</div>
+        <div class="rules" id="fw3-rules"></div>
+        <button class="link" id="fw3-reset">Clear all rules</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-h">Live traffic <span class="tag">run it through</span></div>
+      <div class="panel-b">
+        <p class="note" style="margin-top:0">Simulated network connections are waiting. Run them through your rule list and see what each one hits.</p>
+        <div class="traffic" id="fw3-traffic"></div>
+        <div style="margin-top:14px; display:flex; gap:10px; align-items:center">
+          <button class="btn" id="fw3-run">Run the traffic</button>
+          <span class="toasthint" id="fw3-hint"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="readout" id="fw3-read" style="display:none">
+    <div class="metric good"><div class="n" id="fw3-work">0</div><div class="l">Business services working</div></div>
+    <div class="metric bad"><div class="n" id="fw3-disr">0</div><div class="l">Staff wrongly blocked</div></div>
+    <div class="metric good"><div class="n" id="fw3-stop">0</div><div class="l">Attacks blocked</div></div>
+    <div class="metric bad"><div class="n" id="fw3-breach">0</div><div class="l">Attacks let through</div></div>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(8)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" id="fw3-next" disabled onclick="go(10)">Next: a network that's broken</button>
+  </div>
+</section>
+
+<!-- ======================= FW 4: TROUBLESHOOT ======================= -->
+<section class="screen" data-screen="fw4" data-part="fw">
+  <div class="kicker fw"><b>Firewall lab</b> &middot; stage 4 of 5</div>
+  <h2>Nobody can send email. Fix it.</h2>
+  <div class="teach">
+    <p>A colleague set up this firewall and now staff are complaining: the website loads, but <strong>nobody can send email and address lookups fail</strong>. The broad staff-deny rule is above the specific allowances. Even though each later rule is valid, traffic never reaches it.</p>
+    <p>Run the traffic to see the damage, then fix the list. Remember the golden rule: the firewall stops at the <em>first</em> rule that matches.</p>
+  </div>
+
+  <div class="bench">
+    <div class="panel">
+      <div class="panel-h">The inherited rules <span class="tag">something's off</span></div>
+      <div class="panel-b">
+        <div class="rulebuilder">
+          <select id="rb4-action">
+            <option value="allow">Allow</option>
+            <option value="deny">Block</option>
+          </select>
+          <select id="rb4-service"></select><label class="mini-field">Source <select id="rb4-source"><option value="staff">Staff</option><option value="it">Authorised IT</option><option value="external">Outside</option><option value="*">Any</option></select></label><label class="mini-field">Destination <select id="rb4-target"><option value="internet">Internet</option><option value="resolver">DNS resolver</option><option value="mail">Mail relay</option><option value="server">Company server</option><option value="*">Any</option></select></label><label class="mini-field">Direction <select id="rb4-dir"><option value="out">Outbound</option><option value="in">Inbound</option></select></label><label class="mini-field">Protocol <select id="rb4-proto"><option value="TCP">TCP</option><option value="UDP">UDP</option></select></label>
+          <button class="btn small" id="rb4-add">Add rule</button>
+        </div>
+        <div class="rules" id="fw4-rules"></div>
+        <button class="link" id="fw4-reset">Reset to the broken version</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-h">Traffic <span class="tag">the complaints</span></div>
+      <div class="panel-b">
+        <div class="traffic" id="fw4-traffic"></div>
+        <div style="margin-top:14px; display:flex; gap:10px; align-items:center">
+          <button class="btn" id="fw4-run">Run the traffic</button>
+          <span class="toasthint" id="fw4-hint"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" id="fw4-after" style="display:none">
+    <div class="ch">Fixed</div>
+    <p>An overly broad blocking rule at the top can shadow later allowances, even when those later rules are correct. "Block everything" is easy; the real work is being <em>precise</em> about what to block and where to put it.</p>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(9)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" id="fw4-next" disabled onclick="go(11)">Final test: new traffic</button>
+  </div>
+</section>
+
+<!-- ======================= FW 5: UNSEEN ======================= -->
+<section class="screen" data-screen="fw5" data-part="fw">
+  <div class="kicker fw"><b>Firewall lab</b> &middot; stage 5 of 5</div>
+  <h2>New traffic your rules have never met</h2>
+  <div class="teach">
+    <p>A new collection of traffic will test the rule list from stage 3 — ones you didn't design for. A good configuration keeps the business running and still turns intruders away, even on traffic it has never seen.</p>
+  </div>
+
+  <div class="panel inset" style="margin-bottom:14px">
+    <div class="panel-h">Your rule list <span class="tag">carried over</span></div>
+    <div class="panel-b"><div class="rules" id="fw5-rules"></div></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-h">Unseen traffic <span class="tag">6 new connections</span></div>
+    <div class="panel-b">
+      <div class="traffic" id="fw5-traffic"></div>
+      <div style="margin-top:14px"><button class="btn" id="fw5-run">Run the unseen test</button></div>
+    </div>
+  </div>
+
+  <div class="readout" id="fw5-read" style="display:none">
+    <div class="metric good"><div class="n" id="fw5-work">0</div><div class="l">Business services working</div></div>
+    <div class="metric bad"><div class="n" id="fw5-disr">0</div><div class="l">Staff wrongly blocked</div></div>
+    <div class="metric good"><div class="n" id="fw5-stop">0</div><div class="l">Attacks blocked</div></div>
+    <div class="metric bad"><div class="n" id="fw5-breach">0</div><div class="l">Attacks let through</div></div>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(10)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn" id="fw5-next" disabled onclick="go(12)">Finish: pull it together</button>
+  </div>
+</section>
+
+<!-- ======================= EVALUATION ======================= -->
+<section class="screen" data-screen="eval" data-part="eval">
+  <div class="kicker">Evaluation &middot; make a judgement</div>
+  <h2>So which matters more?</h2>
+  <div class="teach">
+    <p>You've now built both tools and watched them succeed and fail. Here's the evidence you generated — your own results, not a textbook's.</p>
+  </div>
+
+  <div class="evalgrid">
+    <div class="panel">
+      <div class="panel-h">Your antivirus <span class="tag">unseen test</span></div>
+      <div class="panel-b">
+        <table class="sum" id="sum-av"><tbody></tbody></table>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-h">Your firewall <span class="tag">unseen test</span></div>
+      <div class="panel-b">
+        <table class="sum" id="sum-fw"><tbody></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="teach">
+    <h3>What the two have in common</h3>
+    <p>Neither tool is ever perfect. Antivirus settings affect both <em>missed malware</em> and <em>false alarms</em>. The relationship is not always a simple trade-off. The firewall trades <em>security</em> against <em>staff being able to work</em>. In both, "block more" is not the same as "safer," and each tool is blind to what the other handles. That's why real organisations run them together, in layers, rather than choosing one.</p>
+  </div>
+
+  <div class="examq">
+    <h3>Exam-style evaluation</h3>
+    <p class="qtext">Evaluate the extent to which antivirus and firewall software can protect an organisation's data on their own. You should refer to how each tool works, its limitations, and reach a justified overall judgement.</p>
+    <p class="scaffold" style="margin-top:12px">A strong answer will:</p>
+    <ul class="scaffold">
+      <li>explain what each tool checks, and the fact that it cannot do the other's job;</li>
+      <li>use your own results — detection rate, false alarms, blocked attacks, disrupted services;</li>
+      <li>explain a genuine limitation of each (variants and false positives; port ambiguity and rule order);</li>
+      <li>reach a judgement about layering rather than choosing a single "best" tool.</li>
+    </ul>
+  </div>
+
+  <div class="teach">
+    <h3>Your evidence, ready to quote</h3>
+    <p>Copy your results into your written answer so your evaluation is backed by what you actually measured.</p>
+  </div>
+  <textarea class="copybox" id="evidence" readonly></textarea>
+  <div style="margin-top:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+    <button class="btn small" id="copy-ev">Copy my evidence</button>
+    <button class="btn small ghost" id="dl-ev">Download as .txt</button>
+    <button class="btn small ghost" id="print-ev">Print this page</button>
+    <span class="toasthint" id="copy-hint"></span>
+  </div>
+
+  <div class="nav">
+    <button class="link" onclick="go(11)">Back</button>
+    <div class="spacer"></div>
+    <button class="btn ghost" onclick="go(0)">Back to the start</button>
+  </div>
+</section>
+
+</div>
+</main>
+
+<script>
+"use strict";
+
+/* ============================================================
+   SCREEN CONTROLLER
+   ============================================================ */
+const SCREENS = ["cover","orient","av1","av2","av3","av4","av5","fw1","fw2","fw3","fw4","fw5","eval"];
+let maxReached = 0;
+
+function go(i){
+  if(i<0||i>=SCREENS.length) return;
+  maxReached = Math.max(maxReached,i);
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  const el = document.querySelector('[data-screen="'+SCREENS[i]+'"]');
+  el.classList.add("active");
+  window.scrollTo({top:0,behavior:"instant"in window?"instant":"auto"});
+  renderSpine(i);
+  if(SCREENS[i]==="av5") renderAv5Policy();
+  if(SCREENS[i]==="fw5") { syncList("fw5-rules", STATE.fw.rules, false); buildTraffic("fw5-traffic", UNSEEN_TRAFFIC); }
+  if(SCREENS[i]==="eval") buildEval();
+}
+window.go = go;
+
+function renderSpine(i){
+  const spine=document.getElementById("spine"); spine.innerHTML="";
+  for(let k=1;k<SCREENS.length;k++){
+    const seg=document.createElement("div");
+    const part=document.querySelector('[data-screen="'+SCREENS[k]+'"]').dataset.part;
+    seg.className="seg part-"+part+(k<=i?" on":"");
+    spine.appendChild(seg);
+  }
+  const part = document.querySelector('[data-screen="'+SCREENS[i]+'"]').dataset.part;
+  const labels={intro:"Intro",av:"Antivirus",fw:"Firewall",eval:"Evaluate"};
+  document.getElementById("stepno").textContent = i===0?"":labels[part];
+}
+
+/* ============================================================
+   SHARED STATE
+   ============================================================ */
+const STATE = {
+  av:{ selected:new Set(["encryptsManyDocs","modifiesSystemFiles","outboundConnection","hidesProcess"]), threshold:2, useSig:true,
+       unseen:null },
+  fw:{ rules:[], unseen:null }
+};
+
+/* ============================================================
+   ANTIVIRUS DATA + ENGINE
+   ============================================================ */
+const KNOWN_SIGS = ["A1-77-3F","C4-90-12","7E-2B-8D"];
+
+const BEHAVIOURS = {
+  modifiesSystemFiles:{label:"Changes protected system files", sub:"Installers do this too"},
+  encryptsManyDocs:{label:"Encrypts many documents at once", sub:"So does backup software"},
+  outboundConnection:{label:"Sends data to an outside server", sub:"So does cloud sync"},
+  autostart:{label:"Sets itself to run at startup", sub:"Common, not always bad"},
+  hidesProcess:{label:"Hides itself from the task list", sub:"Rarely innocent"},
+  readsContacts:{label:"Reads your contacts / address book", sub:"Suspicious for most apps"}
+};
+
+function bProps(keys){ return keys.map(k=>BEHAVIOURS[k].label); }
+
+// stage 1 practice
+const AV1 = [
+  {name:"invoice_update.exe", sig:"9F-10-22", beh:["modifiesSystemFiles","encryptsManyDocs","outboundConnection"], truth:"malware", about:"Ransomware. Brand new, so its fingerprint isn't on the list yet."},
+  {name:"family_photos.zip", sig:"33-AB-01", beh:[], truth:"clean", about:"An ordinary photo archive."},
+  {name:"backup_tool.exe", sig:"55-CD-77", beh:["encryptsManyDocs","modifiesSystemFiles"], truth:"clean", about:"Genuine backup software — it really does encrypt lots of files."},
+  {name:"game_installer.exe", sig:"A1-77-3F", beh:["modifiesSystemFiles","autostart"], truth:"malware", about:"Known malware. Its fingerprint is on the wanted list."},
+  {name:"payroll.xlsx", sig:"12-00-AA", beh:[], truth:"clean", about:"A normal spreadsheet."},
+  {name:"sys_helper.exe", sig:"C4-90-12", beh:["hidesProcess","outboundConnection","autostart"], truth:"malware", about:"Known spyware, already on the wanted list."}
+];
+// stage 2 variants
+const AV2 = [
+  {name:"game_installer_crack.exe", sig:"A1-77-40", beh:["modifiesSystemFiles","autostart"], truth:"malware", about:"The same malware as before — one byte changed, so the fingerprint no longer matches."},
+  {name:"holiday_itinerary.pdf", sig:"88-21-9C", beh:[], truth:"clean", about:"A harmless document."},
+  {name:"sys_helper_v2.exe", sig:"C4-90-13", beh:["hidesProcess","outboundConnection","autostart"], truth:"malware", about:"A fresh variant of the spyware. New fingerprint, identical behaviour."}
+];
+// stage 3 (same tool, teaches heuristics) — reuse a telling mix
+const AV3 = [
+  {name:"invoice_update.exe", sig:"9F-10-22", beh:["modifiesSystemFiles","encryptsManyDocs","outboundConnection"], truth:"malware", about:"Ransomware — three warning signs."},
+  {name:"game_installer_crack.exe", sig:"A1-77-40", beh:["modifiesSystemFiles","autostart"], truth:"malware", about:"Malware variant — two warning signs, no fingerprint match."},
+  {name:"payroll.xlsx", sig:"12-00-AA", beh:[], truth:"clean", about:"Clean spreadsheet — no warning signs."},
+  {name:"screensaver.exe", sig:"41-7B-10", beh:["autostart"], truth:"clean", about:"Harmless — just sets itself to start up."},
+  {name:"keylogger.exe", sig:"5C-33-A1", beh:["hidesProcess","readsContacts","outboundConnection","autostart"], truth:"malware", about:"Spyware — four warning signs."}
+];
+// stage 4 (false positives)
+const AV4 = [
+  {name:"invoice_update.exe", sig:"9F-10-22", beh:["modifiesSystemFiles","encryptsManyDocs","outboundConnection"], truth:"malware", about:"Ransomware."},
+  {name:"backup_tool.exe", sig:"55-CD-77", beh:["encryptsManyDocs","modifiesSystemFiles"], truth:"clean", about:"Real backup software — encrypts many files and touches system folders, but it's honest."},
+  {name:"dropbox_sync.exe", sig:"62-A0-04", beh:["outboundConnection","autostart"], truth:"clean", about:"Genuine cloud sync — sends data out and starts with the computer."},
+  {name:"office_setup.msi", sig:"77-91-2B", beh:["modifiesSystemFiles"], truth:"clean", about:"A legitimate installer — changing system files is its whole job."},
+  {name:"keylogger.exe", sig:"5C-33-A1", beh:["hidesProcess","readsContacts","outboundConnection","autostart"], truth:"malware", about:"Spyware — four warning signs."}
+];
+// stage 5 unseen
+const AV5 = [
+  {name:"tax_return_2025.pdf", sig:"10-40-FF", beh:[], truth:"clean", about:"A plain document."},
+  {name:"free_vpn_setup.exe", sig:"B2-55-71", beh:["outboundConnection","autostart","hidesProcess"], truth:"malware", about:"Malware hiding in a free VPN — three warning signs, unknown fingerprint."},
+  {name:"photo_sync.exe", sig:"90-12-6D", beh:["outboundConnection","autostart"], truth:"clean", about:"Genuine photo backup — behaves a bit like malware but isn't."},
+  {name:"ransom_note.exe", sig:"C0-08-3A", beh:["encryptsManyDocs","modifiesSystemFiles","outboundConnection"], truth:"malware", about:"Ransomware — three warning signs, unknown fingerprint."},
+  {name:"company_installer.msi", sig:"44-7E-90", beh:["modifiesSystemFiles"], truth:"clean", about:"A legitimate company installer."},
+  {name:"keylog_helper.exe", sig:"7E-2B-8D", beh:["hidesProcess","readsContacts","outboundConnection","autostart"], truth:"malware", about:"Known spyware — on the wanted list."}
+];
+
+function avScan(file){
+  const sigMatch = STATE.av.useSig && KNOWN_SIGS.includes(file.sig);
+  const marked = [...STATE.av.selected];
+  const hits = file.beh.filter(b=>marked.includes(b));
+  const behFlag = marked.length>0 && hits.length>=STATE.av.threshold;
+  const flagged = sigMatch || behFlag;
+  let reason;
+  if(sigMatch) reason = "Fingerprint "+file.sig+" is on the wanted list.";
+  else if(behFlag) reason = "Showed "+hits.length+" of your warning signs (needed "+STATE.av.threshold+"): "+bProps(hits).join(", ")+".";
+  else if(marked.length===0) reason = "No fingerprint match, and you haven't set any behaviour warnings.";
+  else reason = "Only "+hits.length+" warning sign"+(hits.length===1?"":"s")+" — below your threshold of "+STATE.av.threshold+".";
+  const isMal = file.truth==="malware";
+  let outcome; // tp fn fp tn
+  if(isMal && flagged) outcome="tp";
+  else if(isMal && !flagged) outcome="fn";
+  else if(!isMal && flagged) outcome="fp";
+  else outcome="tn";
+  return {flagged,reason,outcome};
+}
+
+function renderFiles(containerId, files, {showSig=true, showProps=true}={}){
+  const c=document.getElementById(containerId); c.innerHTML="";
+  files.forEach((f,idx)=>{
+    const el=document.createElement("div"); el.className="file"; el.dataset.idx=idx;
+    let props="";
+    if(showProps){
+      const chips = f.beh.map(b=>'<span class="prop">'+BEHAVIOURS[b].label+'</span>').join("");
+      const sig = showSig? '<span class="prop sig">'+f.sig+'</span>':"";
+      props='<div class="props">'+sig+chips+(f.beh.length===0&&!showSig?'<span class="prop">no notable behaviour</span>':"")+'</div>';
+    }
+    el.innerHTML='<div class="fname">'+f.name+'</div>'+props+
+      '<div class="verdict-line"></div>';
+    c.appendChild(el);
+  });
+}
+
+function paintAvResults(containerId, files, countsTargetPrefix){
+  const c=document.getElementById(containerId);
+  let tp=0,fn=0,fp=0,tn=0;
+  [...c.children].forEach((el,i)=>{
+    const f=files[i]; const r=avScan(f);
+    el.classList.remove("r-tp","r-fn","r-fp","r-tn","scored");
+    el.classList.add("scored","r-"+r.outcome);
+    const vl=el.querySelector(".verdict-line");
+    const stamp = r.flagged? '<span class="stamp threat">Threat</span>' : '<span class="stamp clean">Clean</span>';
+    const outMap={tp:["ok","Correctly flagged"],tn:["ok","Correctly allowed"],fn:["bad","Missed — malware let through"],fp:["warn","False alarm — safe file blocked"]};
+    const [cls,lab]=outMap[r.outcome];
+    vl.innerHTML = 'Your detector: '+stamp+' &nbsp; <span class="outcome '+cls+'">'+lab+'</span>'+
+      '<div class="vreason">'+r.reason+' <em style="color:var(--ink-faint)">('+f.about+')</em></div>';
+    if(r.outcome==="tp")tp++; else if(r.outcome==="fn")fn++; else if(r.outcome==="fp")fp++; else tn++;
+  });
+  if(countsTargetPrefix){
+    document.getElementById(countsTargetPrefix+"-tp").textContent=tp;
+    document.getElementById(countsTargetPrefix+"-fn").textContent=fn;
+    document.getElementById(countsTargetPrefix+"-fp").textContent=fp;
+    document.getElementById(countsTargetPrefix+"-tn").textContent=tn;
+  }
+  return {tp,fn,fp,tn};
+}
+
+/* ---- wire behaviour toggles (two synced copies) ---- */
+function buildBehaviourList(containerId, threshId, valId, sigId){
+  const c=document.getElementById(containerId); c.innerHTML="";
+  Object.keys(BEHAVIOURS).forEach(k=>{
+    const sel=STATE.av.selected.has(k);
+    const lab=document.createElement("label"); lab.className="tog"+(sel?" sel":"");
+    lab.innerHTML='<input type="checkbox" '+(sel?"checked":"")+'><span><span class="t-main">'+BEHAVIOURS[k].label+'</span><br><span class="t-sub">'+BEHAVIOURS[k].sub+'</span></span>';
+    lab.querySelector("input").addEventListener("change",e=>{
+      if(e.target.checked) STATE.av.selected.add(k); else STATE.av.selected.delete(k);
+      lab.classList.toggle("sel",e.target.checked);
+      syncBehaviourUI();
+    });
+    c.appendChild(lab);
+  });
+}
+function syncBehaviourUI(){
+  // re-render both lists to reflect STATE
+  ["behav-list","behav-list-2"].forEach(id=>{
+    const c=document.getElementById(id); if(!c) return;
+    [...c.children].forEach((lab,i)=>{
+      const k=Object.keys(BEHAVIOURS)[i];
+      const inp=lab.querySelector("input"); const on=STATE.av.selected.has(k);
+      inp.checked=on; lab.classList.toggle("sel",on);
+    });
+  });
+}
+
+/* ============================================================
+   FIREWALL DATA + ENGINE
+   ============================================================ */
+const SERVICES = {
+  https:{label:"Secure web browsing", port:443, proto:"TCP", dir:"out", desc:"Loading encrypted websites. Staff need this outbound."},
+  dns:{label:"Web address lookups (DNS)", port:53, proto:"UDP", dir:"out", desc:"Turns a web address into a number the computer can reach. Needed outbound, or nothing loads."},
+  smtp:{label:"Submitting email", port:587, proto:"TCP", dir:"out", desc:"SMTP submission over port 587, used by many mail clients to submit outgoing email."},
+  http:{label:"Old (insecure) web", port:80, proto:"TCP", dir:"out", desc:"Unencrypted web. Still used by some sites."},
+  ssh:{label:"Remote admin from outside (SSH)", port:22, proto:"TCP", dir:"in", desc:"Lets someone outside control a machine. Attackers probe this constantly."},
+  rdp:{label:"Remote desktop from outside (RDP)", port:3389, proto:"TCP", dir:"in", desc:"Full remote desktop from outside. A favourite target for break-ins."}
+};
+const PORT_CARDS = ["https","dns","smtp","ssh"];
+
+function ruleText(r){
+  const dir = r.dir==="in"?"inbound":"outbound";
+  const svc = Object.values(SERVICES).find(s=>s.port===r.port && s.proto===r.proto && s.dir===r.dir);
+  const name = svc? svc.label : (r.port==='*'?'All services':(dir+' '+r.proto+' '+r.port));
+  return {name, mono:(r.src||"*")+" → "+(r.dst||"*")+" / "+r.proto+" "+r.port+" / "+dir};
+}
+
+function makeRule(action, serviceKey, source="*", target="*", dir, proto){
+  const s=SERVICES[serviceKey];
+  return {action, src:source, dst:target, dir:dir||s.dir, proto:proto||s.proto, port:s.port, key:serviceKey};
+}
+
+function fwEval(pkt, rules){
+  for(let i=0;i<rules.length;i++){
+    const r=rules[i];
+    const matches=(r.dir==="*"||r.dir===pkt.dir)
+      && (r.proto==="*"||r.proto===pkt.proto)
+      && (r.port==="*"||r.port===pkt.port)
+      && (!r.src||r.src==="*"||r.src===pkt.src)
+      && (!r.dst||r.dst==="*"||r.dst===pkt.dst);
+    if(matches) return {action:r.action, by:i};
+  }
+  return {action:"deny", by:-1};
+}
+
+// traffic sets
+const PRACTICE_TRAFFIC = [
+ {what:"Staff open the company portal",src:"staff",dst:"internet",dir:"out",proto:"TCP",port:443,legit:true},
+ {what:"Staff look up a web address",src:"staff",dst:"resolver",dir:"out",proto:"UDP",port:53,legit:true},
+ {what:"Staff submit a message to the mail relay",src:"staff",dst:"mail",dir:"out",proto:"TCP",port:587,legit:true},
+ {what:"Approved IT support connect to the server",src:"it",dst:"server",dir:"in",proto:"TCP",port:22,legit:true},
+ {what:"Untrusted external host probes SSH",src:"external",dst:"server",dir:"in",proto:"TCP",port:22,legit:false},
+ {what:"Untrusted external host probes RDP",src:"external",dst:"server",dir:"in",proto:"TCP",port:3389,legit:false},
+ {what:"Compromised staff laptop sends data over HTTPS",src:"staff",dst:"internet",dir:"out",proto:"TCP",port:443,legit:false,note:true,noteText:"This matches legitimate HTTPS metadata exactly. Our rule-based model cannot distinguish intent; endpoint detection and monitoring would also be needed."}
+];
+const UNSEEN_TRAFFIC = [
+ {what:"Staff download legitimate web resources",src:"staff",dst:"internet",dir:"out",proto:"TCP",port:443,legit:true},
+ {what:"A staff workstation performs DNS lookup",src:"staff",dst:"resolver",dir:"out",proto:"UDP",port:53,legit:true},
+ {what:"Mail client submits mail",src:"staff",dst:"mail",dir:"out",proto:"TCP",port:587,legit:true},
+ {what:"Authorised IT technician administers the server",src:"it",dst:"server",dir:"in",proto:"TCP",port:22,legit:true},
+ {what:"Visitor attempts SSH from outside",src:"external",dst:"server",dir:"in",proto:"TCP",port:22,legit:false},
+ {what:"Outside source scans remote desktop",src:"external",dst:"server",dir:"in",proto:"TCP",port:3389,legit:false},
+ {what:"Staff laptop tries outbound SSH to an external host",src:"staff",dst:"internet",dir:"out",proto:"TCP",port:22,legit:false},
+ {what:"Malware uses the same metadata as ordinary HTTPS",src:"staff",dst:"internet",dir:"out",proto:"TCP",port:443,legit:false,note:true,noteText:"Identical packet metadata to legitimate browsing: this test exposes a limitation, not a misconfiguration."}
+];
+const FW4_START = [
+ {action:"deny",dir:"out",proto:"*",port:"*",src:"staff",dst:"*",key:"broad-deny"},
+ {action:"allow",dir:"out",proto:"TCP",port:443,src:"staff",dst:"internet",key:"https"},
+ {action:"allow",dir:"out",proto:"UDP",port:53,src:"staff",dst:"resolver",key:"dns"},
+ {action:"allow",dir:"out",proto:"TCP",port:587,src:"staff",dst:"mail",key:"smtp"},
+ {action:"deny",dir:"in",proto:"TCP",port:22,src:"external",dst:"server",key:"ssh"}
+];
+const FW4_TRAFFIC = [
+ {what:"Staff web browsing",src:"staff",dst:"internet",dir:"out",proto:"TCP",port:443,legit:true},
+ {what:"Staff DNS requests",src:"staff",dst:"resolver",dir:"out",proto:"UDP",port:53,legit:true},
+ {what:"Staff sending mail",src:"staff",dst:"mail",dir:"out",proto:"TCP",port:587,legit:true},
+ {what:"External SSH probe",src:"external",dst:"server",dir:"in",proto:"TCP",port:22,legit:false}
+];
+/* ---- rule list rendering + editing ---- */
+function serviceOptions(selectId){
+  const sel=document.getElementById(selectId); sel.innerHTML="";
+  Object.keys(SERVICES).forEach(k=>{
+    const o=document.createElement("option"); o.value=k;
+    o.textContent=SERVICES[k].label+"  ("+SERVICES[k].proto+" "+SERVICES[k].port+")";
+    sel.appendChild(o);
+  });
+}
+
+function syncList(containerId, rules, editable){
+  const c=document.getElementById(containerId); c.innerHTML="";
+  if(rules.length===0){
+    const e=document.createElement("div"); e.className="default-rule";
+    e.textContent="No rules yet. With an empty list, every connection is blocked by default.";
+    c.appendChild(e);
+  }
+  rules.forEach((r,i)=>{
+    const t=ruleText(r);
+    const row=document.createElement("div"); row.className="rrow "+r.action;
+    let controls="";
+    if(editable){
+      controls='<div class="ract">'+
+        '<button class="iconbtn" title="Move up" data-act="up" data-i="'+i+'">&uarr;</button>'+
+        '<button class="iconbtn" title="Move down" data-act="down" data-i="'+i+'">&darr;</button>'+
+        '<button class="iconbtn" title="Remove" data-act="del" data-i="'+i+'">&times;</button></div>';
+    }
+    row.innerHTML='<div class="ri">'+(i+1)+'</div>'+
+      '<div class="rtxt"><span class="rtag">'+(r.action==="allow"?"ALLOW":"BLOCK")+'</span> '+t.name+
+      ' <span class="mono">('+t.mono+')</span></div>'+controls;
+    c.appendChild(row);
+  });
+  const def=document.createElement("div"); def.className="default-rule";
+  def.textContent="Default: block anything no rule above matched.";
+  c.appendChild(def);
+  if(editable){
+    c.querySelectorAll(".iconbtn").forEach(b=>{
+      b.addEventListener("click",()=>{
+        const i=+b.dataset.i, act=b.dataset.act;
+        if(act==="del") rules.splice(i,1);
+        else if(act==="up"&&i>0){ [rules[i-1],rules[i]]=[rules[i],rules[i-1]]; }
+        else if(act==="down"&&i<rules.length-1){ [rules[i+1],rules[i]]=[rules[i],rules[i+1]]; }
+        syncList(containerId,rules,true);
+      });
+    });
+  }
+}
+
+function buildTraffic(containerId, traffic){
+  const c=document.getElementById(containerId); c.innerHTML="";
+  traffic.forEach((p,i)=>{
+    const dir=p.dir==="in"?"inbound":"outbound";
+    const el=document.createElement("div"); el.className="pkt"; el.dataset.i=i;
+    el.innerHTML='<div class="pwhat">'+p.what+'</div>'+
+      '<div class="pmeta">'+(p.src||'?')+' → '+(p.dst||'?')+' &middot; '+dir+' &middot; '+p.proto+' '+p.port+'</div>'+
+      '<div class="pres"></div>';
+    c.appendChild(el);
+  });
+}
+
+function runTraffic(containerId, traffic, rules, countsPrefix){
+  const c=document.getElementById(containerId);
+  let work=0,disr=0,stop=0,breach=0;
+  [...c.children].forEach((el,i)=>{
+    const p=traffic[i]; const res=fwEval(p,rules);
+    const allowed = res.action==="allow";
+    el.classList.remove("p-ok","p-bad","p-note","scored"); el.classList.add("scored");
+    const by = res.by===-1? "the default block (no rule matched)" : "rule "+(res.by+1);
+    const stamp = allowed? '<span class="stamp allow">Allowed</span>':'<span class="stamp block">Blocked</span>';
+    let cls,lab;
+    if(p.note){
+      cls="warn"; lab = allowed? "Let through — looks identical to real web traffic" : "Blocked — but this would also block real browsing";
+      el.classList.add("p-note");
+    } else if(p.legit && allowed){ cls="ok"; lab="Business service working"; work++; el.classList.add("p-ok"); }
+    else if(p.legit && !allowed){ cls="bad"; lab="Staff blocked from working"; disr++; el.classList.add("p-bad"); }
+    else if(!p.legit && !allowed){ cls="ok"; lab="Attack blocked"; stop++; el.classList.add("p-ok"); }
+    else { cls="bad"; lab="Attack let through"; breach++; el.classList.add("p-bad"); }
+    const noteExtra = p.note? '<div class="vreason">'+p.noteText+'</div>':"";
+    el.querySelector(".pres").innerHTML = stamp+' &nbsp;<span class="outcome '+cls+'">'+lab+'</span>'+
+      '<div class="vreason">Matched '+by+'.</div>'+noteExtra;
+  });
+  if(countsPrefix){
+    document.getElementById(countsPrefix+"-work").textContent=work;
+    document.getElementById(countsPrefix+"-disr").textContent=disr;
+    document.getElementById(countsPrefix+"-stop").textContent=stop;
+    document.getElementById(countsPrefix+"-breach").textContent=breach;
+  }
+  return {work,disr,stop,breach};
+}
+
+/* ============================================================
+   QUIZ CHECKS
+   ============================================================ */
+function wireCheck(id, feedback){
+  const box=document.getElementById(id);
+  const opts=[...box.querySelectorAll(".opt")];
+  const fx=box.querySelector(".cfx");
+  opts.forEach(o=>o.addEventListener("click",()=>{
+    const ok=o.dataset.ok==="1";
+    opts.forEach(x=>{x.disabled=true; if(x.dataset.ok==="1")x.classList.add("correct");});
+    if(!ok) o.classList.add("wrong");
+    fx.className="cfx show "+(ok?"ok":"no");
+    fx.textContent = ok? feedback.ok : feedback.no;
+    // allow retry
+    setTimeout(()=>{},0);
+    box.querySelector(".retry")?.remove();
+    if(!ok){
+      const r=document.createElement("button"); r.className="link retry"; r.textContent="Try again";
+      r.style.marginTop="4px";
+      r.onclick=()=>{opts.forEach(x=>{x.disabled=false;x.classList.remove("correct","wrong");}); fx.className="cfx"; r.remove();};
+      fx.after(r);
+    }
+  }));
+}
+
+/* ============================================================
+   EVALUATION BUILD
+   ============================================================ */
+function renderAv5Policy(){
+  const marked=[...STATE.av.selected];
+  const txt = document.getElementById("av5-policy");
+  txt.innerHTML = 'Flag a file if it matches a known fingerprint'+(STATE.av.useSig?"":" <em>(fingerprints turned off)</em>")+
+    ', or if it shows at least <b>'+STATE.av.threshold+'</b> of these warning signs: '+
+    (marked.length? bProps(marked).join(", ") : "<em>none selected</em>")+'.';
+}
+
+function buildEval(){
+  // ensure unseen tests have run at least conceptually; use stored or compute
+  const av = STATE.av.unseen || paintStoredAv();
+  const fw = STATE.fw.unseen || {work:"—",disr:"—",stop:"—",breach:"—"};
+  const avTbl=document.querySelector("#sum-av tbody");
+  const total = AV5.length;
+  const detRate = (av.tp+av.fn)>0? Math.round(av.tp/(av.tp+av.fn)*100):0;
+  avTbl.innerHTML =
+    row("Malware caught", av.tp+" of "+(av.tp+av.fn))+
+    row("Malware missed", av.fn)+
+    row("False alarms on safe files", av.fp)+
+    row("Detection rate", detRate+"%");
+  const fwTbl=document.querySelector("#sum-fw tbody");
+  fwTbl.innerHTML =
+    row("Business services working", fw.work)+
+    row("Staff wrongly blocked", fw.disr)+
+    row("Attacks blocked", fw.stop)+
+    row("Attacks let through", fw.breach);
+
+  // Export experimental measurements only: the learner must write their own judgement.
+  const marked=[...STATE.av.selected];
+  const ev =
+"SECURITY BENCH: MY EXPERIMENTAL RESULTS\n"+
+"ANTIVIRUS / UNSEEN SAMPLES\n"+
+"Checks selected: "+(marked.length?bProps(marked).join("; "):"none")+"\n"+
+"Threshold: "+STATE.av.threshold+"\nKnown signatures enabled: "+STATE.av.useSig+"\n"+
+"Caught "+av.tp+"; missed "+av.fn+"; safe allowed "+av.tn+"; false alarms "+av.fp+"; detection rate "+detRate+"%\n\n"+
+"FIREWALL / UNSEEN TRAFFIC\n"+
+"Legitimate connections allowed "+fw.work+"; legitimate blocked "+fw.disr+"; unwanted blocked "+fw.stop+"; unwanted allowed "+fw.breach+"\n"+
+"Rules (first match wins):\n"+STATE.fw.rules.map((r,i)=>(i+1)+": "+r.action+" "+(r.src||"*")+" → "+(r.dst||"*")+" "+r.dir+" "+r.proto+" "+r.port).join("\n")+"\n\n"+
+"MY EXPLANATION AND JUDGEMENT: (complete in your own words)\n";
+  document.getElementById("evidence").value=ev;
+}
+function paintStoredAv(){ return STATE.av.unseen || {tp:0,fn:0,fp:0,tn:0}; }
+function row(k,v){ return '<tr><td>'+k+'</td><td class="v">'+v+'</td></tr>'; }
+
+/* ============================================================
+   INIT / WIRING
+   ============================================================ */
+document.addEventListener("DOMContentLoaded",()=>{
+  renderSpine(0);
+
+  // signature db chips
+  document.getElementById("sigdb").innerHTML = KNOWN_SIGS.map(s=>'<span class="prop sig">'+s+'</span>').join("")+
+    '<span class="prop" style="background:transparent;border:none;color:var(--ink-faint)">&larr; the entire wanted list, for now</span>';
+
+  // checks
+  wireCheck("chk-orient",{
+    ok:"Right. The antivirus inspects files on the machine. A firewall never opens files — it only controls connections.",
+    no:"Not quite. A firewall controls connections, it doesn't open files. Catching a downloaded file is the antivirus's job."});
+  wireCheck("chk-fw1",{
+    ok:"Exactly. Allow or block each connection — that single decision, over and over.",
+    no:"That's an antivirus's job, not a firewall's. A firewall decides whether each connection is allowed or blocked."});
+  wireCheck("chk-fw2",{
+    ok:"Correct. Port 443 is secure web, and outbound means it started inside — normal staff browsing.",
+    no:"Look at the port and direction: 443 is secure web and 'out' means staff reached out. That's ordinary browsing."});
+
+  // AV stage 1
+  renderFiles("av1-files", AV1, {showSig:true, showProps:false});
+  document.getElementById("av1-scan").addEventListener("click",()=>{
+    const old={useSig:STATE.av.useSig, sel:new Set(STATE.av.selected)};
+    STATE.av.useSig=true; STATE.av.selected=new Set(); // signatures only
+    paintAvResults("av1-files", AV1, null);
+    STATE.av.useSig=old.useSig; STATE.av.selected=old.sel;
+    document.getElementById("av1-after").style.display="block";
+    document.getElementById("av1-next").disabled=false;
+    document.getElementById("av1-hint").textContent="Caught the two on the wanted list. Missed the rest.";
+  });
+
+  // AV stage 2
+  renderFiles("av2-files", AV2, {showSig:true, showProps:false});
+  document.getElementById("av2-scan").addEventListener("click",()=>{
+    const old={useSig:STATE.av.useSig, sel:new Set(STATE.av.selected)};
+    STATE.av.useSig=true; STATE.av.selected=new Set();
+    paintAvResults("av2-files", AV2, null);
+    STATE.av.useSig=old.useSig; STATE.av.selected=old.sel;
+    document.getElementById("av2-after").style.display="block";
+    document.getElementById("av2-next").disabled=false;
+    document.getElementById("av2-hint").textContent="Every variant slipped past. Fingerprints alone aren't enough.";
+  });
+
+  // AV stage 3
+  buildBehaviourList("behav-list");
+  renderFiles("av3-files", AV3, {showSig:true, showProps:true});
+  const thr=document.getElementById("thresh"), thrV=document.getElementById("thresh-val");
+  thr.addEventListener("input",()=>{STATE.av.threshold=+thr.value; thrV.textContent=thr.value; syncThresh();});
+  document.getElementById("use-sig").addEventListener("change",e=>{STATE.av.useSig=e.target.checked; syncSig();});
+  document.getElementById("av3-scan").addEventListener("click",()=>{
+    paintAvResults("av3-files", AV3, "av3");
+    document.getElementById("av3-read").style.display="grid";
+    document.getElementById("av3-next").disabled=false;
+    document.getElementById("av3-hint").textContent="Notice behaviour catches the variants fingerprints missed.";
+  });
+
+  // AV stage 4
+  buildBehaviourList("behav-list-2");
+  renderFiles("av4-files", AV4, {showSig:true, showProps:true});
+  const thr2=document.getElementById("thresh2"), thrV2=document.getElementById("thresh-val2");
+  thr2.addEventListener("input",()=>{STATE.av.threshold=+thr2.value; thrV2.textContent=thr2.value; syncThresh();});
+  document.getElementById("use-sig2").addEventListener("change",e=>{STATE.av.useSig=e.target.checked; syncSig();});
+  document.getElementById("av4-scan").addEventListener("click",()=>{
+    const res=paintAvResults("av4-files", AV4, "av4");
+    document.getElementById("av4-read").style.display="grid";
+    document.getElementById("av4-next").disabled=false;
+    const after=document.getElementById("av4-after"), t=document.getElementById("av4-after-txt");
+    after.style.display="block";
+    if(res.fp>0 && res.fn>0) t.textContent="You've got it from both ends: "+res.fp+" honest file(s) wrongly blocked and "+res.fn+" piece(s) of malware missed. Changing the policy can alter both measures. Evaluate the actual results before concluding.";
+    else if(res.fp>0) t.textContent="You caught all the malware, but blocked "+res.fp+" honest file(s). Loosen the policy and you risk missing real threats — that's the trade-off.";
+    else if(res.fn>0) t.textContent="No false alarms, but "+res.fn+" piece(s) of malware got through. Tighten up and the false alarms return.";
+    else t.textContent="A clean run on this set — no misses, no false alarms. The real test is files you haven't tuned against. See if it holds.";
+  });
+
+  // AV stage 5
+  renderFiles("av5-files", AV5, {showSig:false, showProps:true});
+  document.getElementById("av5-scan").addEventListener("click",()=>{
+    const res=paintAvResults("av5-files", AV5, "av5");
+    STATE.av.unseen=res;
+    document.getElementById("av5-read").style.display="grid";
+    document.getElementById("av5-next").disabled=false;
+    const v=document.getElementById("av5-verdict"); v.style.display="block";
+    const det=(res.tp+res.fn)>0?Math.round(res.tp/(res.tp+res.fn)*100):0;
+    v.innerHTML='<hr class="soft"><p>On files it had never seen, your detector caught <b>'+res.tp+'</b> of '+(res.tp+res.fn)+
+      ' threats ('+det+'%), let '+res.fn+' through, and raised '+res.fp+' false alarm'+(res.fp===1?"":"s")+
+      '. There is no setting that scores perfectly on every file — which is exactly the point you\u2019ll evaluate at the end.</p>';
+  });
+
+  // FW stage 2 port cards
+  const pc=document.getElementById("portcards");
+  PORT_CARDS.forEach(k=>{
+    const s=SERVICES[k];
+    const card=document.createElement("div"); card.className="fcard"; card.tabIndex=0;
+    card.innerHTML='<div class="port">'+s.port+'</div><div class="svc">'+s.label.replace(/\s*\(.*\)/,"")+'</div><div class="desc">'+s.desc+'</div>';
+    const toggle=()=>card.classList.toggle("open");
+    card.addEventListener("click",toggle);
+    card.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle();}});
+    pc.appendChild(card);
+  });
+
+  // FW stage 3 builder
+  serviceOptions("rb-service");
+  syncList("fw3-rules", STATE.fw.rules, true);
+  buildTraffic("fw3-traffic", PRACTICE_TRAFFIC);
+  document.getElementById("rb-add").addEventListener("click",()=>{
+    const a=document.getElementById("rb-action").value, s=document.getElementById("rb-service").value;
+    STATE.fw.rules.push(makeRule(a,s,document.getElementById("rb-source").value,document.getElementById("rb-target").value,document.getElementById("rb-dir").value,document.getElementById("rb-proto").value)); syncList("fw3-rules",STATE.fw.rules,true);
+  });
+  document.getElementById("fw3-reset").addEventListener("click",()=>{STATE.fw.rules=[]; syncList("fw3-rules",STATE.fw.rules,true);});
+  document.getElementById("fw3-run").addEventListener("click",()=>{
+    const r=runTraffic("fw3-traffic",PRACTICE_TRAFFIC,STATE.fw.rules,"fw3");
+    document.getElementById("fw3-read").style.display="grid";
+    document.getElementById("fw3-next").disabled=false;
+    document.getElementById("fw3-hint").textContent = r.disr>0? "Some staff got blocked — check which service and add an allow rule.":"Looking good. Try the trickier tests next.";
+  });
+
+  // FW stage 4 troubleshoot
+  let fw4rules = FW4_START.map(r=>({...r}));
+  serviceOptions("rb4-service");
+  syncList("fw4-rules", fw4rules, true);
+  buildTraffic("fw4-traffic", FW4_TRAFFIC);
+  document.getElementById("rb4-add").addEventListener("click",()=>{
+    const a=document.getElementById("rb4-action").value, s=document.getElementById("rb4-service").value;
+    fw4rules.push(makeRule(a,s,document.getElementById("rb4-source").value,document.getElementById("rb4-target").value,document.getElementById("rb4-dir").value,document.getElementById("rb4-proto").value)); syncList("fw4-rules",fw4rules,true);
+  });
+  document.getElementById("fw4-reset").addEventListener("click",()=>{fw4rules=FW4_START.map(r=>({...r})); syncList("fw4-rules",fw4rules,true); document.getElementById("fw4-after").style.display="none";});
+  document.getElementById("fw4-run").addEventListener("click",()=>{
+    const r=runTraffic("fw4-traffic",FW4_TRAFFIC,fw4rules,null);
+    const fixed = r.disr===0 && r.breach===0 && r.work===3 && r.stop===1;
+    document.getElementById("fw4-next").disabled = !fixed;
+    document.getElementById("fw4-after").style.display = fixed? "block":"none";
+    document.getElementById("fw4-hint").textContent = fixed? "Fixed — every service works and the intruder is still blocked." :
+      (r.disr>0? "Still "+r.disr+" service(s) blocked. A deny rule near the top is catching them — remove or reorder it." : "Careful — you've now let the intruder in. Keep SSH blocked.");
+  });
+
+  // FW stage 5 unseen
+  buildTraffic("fw5-traffic", UNSEEN_TRAFFIC);
+  document.getElementById("fw5-run").addEventListener("click",()=>{
+    const r=runTraffic("fw5-traffic",UNSEEN_TRAFFIC,STATE.fw.rules,"fw5");
+    STATE.fw.unseen=r;
+    document.getElementById("fw5-read").style.display="grid";
+    document.getElementById("fw5-next").disabled=false;
+  });
+
+  // evaluation copy
+  document.getElementById("copy-ev").addEventListener("click",()=>{
+    const ta=document.getElementById("evidence"); ta.select();
+    let done=false;
+    try{ if(navigator.clipboard){ navigator.clipboard.writeText(ta.value); done=true; } }catch(e){}
+    if(!done){ try{ document.execCommand("copy"); done=true; }catch(e){} }
+    document.getElementById("copy-hint").textContent = done? "Copied. Paste it into your written answer." : "Select the text above and copy it.";
+  });
+  document.getElementById("dl-ev").addEventListener("click",()=>{
+    const txt=document.getElementById("evidence").value; let done=false;
+    try{
+      const a=document.createElement("a");
+      a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain"}));
+      a.download="security-bench-evidence.txt"; a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href),600); done=true;
+    }catch(e){}
+    document.getElementById("copy-hint").textContent = done? "Saved security-bench-evidence.txt to your downloads." : "Couldn't save the file here — use copy instead.";
+  });
+  document.getElementById("print-ev").addEventListener("click",()=>window.print());
+
+  function syncThresh(){
+    document.getElementById("thresh").value=STATE.av.threshold;
+    document.getElementById("thresh-val").textContent=STATE.av.threshold;
+    document.getElementById("thresh2").value=STATE.av.threshold;
+    document.getElementById("thresh-val2").textContent=STATE.av.threshold;
+  }
+  function syncSig(){
+    document.getElementById("use-sig").checked=STATE.av.useSig;
+    document.getElementById("use-sig2").checked=STATE.av.useSig;
+  }
+});
+</script>
+</body>
+</html>
