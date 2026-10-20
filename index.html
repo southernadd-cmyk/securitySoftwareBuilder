@@ -281,6 +281,7 @@
     textarea.copybox{min-height:auto; border-color:var(--rule)}
   }
 </style>
+<link rel="stylesheet" href="assets/rework.css">
 </head>
 <body>
 
@@ -756,7 +757,7 @@
   <div class="kicker fw"><b>Firewall lab</b> &middot; stage 4 of 5</div>
   <h2>Nobody can send email. Fix it.</h2>
   <div class="teach">
-    <p>A colleague set up this firewall and now staff are complaining: the website loads, but <strong>nobody can send email and address lookups fail</strong>. Nothing here is "broken" in the usual sense — every rule works exactly as written. The problem is the order.</p>
+    <p>A colleague set up this firewall and now staff are complaining: <strong>all staff outbound services are blocked</strong>. Nothing here is "broken" in the usual sense — every rule works exactly as written. The problem is the order.</p>
     <p>Run the traffic to see the damage, then fix the list. Remember the golden rule: the firewall stops at the <em>first</em> rule that matches.</p>
   </div>
 
@@ -1025,11 +1026,9 @@ function renderFiles(containerId, files, {showSig=true, showProps=true}={}){
   files.forEach((f,idx)=>{
     const el=document.createElement("div"); el.className="file"; el.dataset.idx=idx;
     let props="";
-    if(showProps){
-      const chips = f.beh.map(b=>'<span class="prop">'+BEHAVIOURS[b].label+'</span>').join("");
-      const sig = showSig? '<span class="prop sig">'+f.sig+'</span>':"";
-      props='<div class="props">'+sig+chips+(f.beh.length===0&&!showSig?'<span class="prop">no notable behaviour</span>':"")+'</div>';
-    }
+    const chips = showProps ? f.beh.map(b=>'<span class="prop">'+BEHAVIOURS[b].label+'</span>').join("") : "";
+    const sig = showSig? '<span class="prop sig">'+f.sig+'</span>':"";
+    if(showProps||showSig) props='<div class="props">'+sig+chips+(f.beh.length===0&&!showSig?'<span class="prop">no notable behaviour</span>':"")+'</div>';
     el.innerHTML='<div class="fname">'+f.name+'</div>'+props+
       '<div class="verdict-line"></div>';
     c.appendChild(el);
@@ -1168,6 +1167,16 @@ function serviceOptions(selectId){
     o.textContent=SERVICES[k].label+"  ("+SERVICES[k].proto+" "+SERVICES[k].port+")";
     sel.appendChild(o);
   });
+  const prefix=selectId==="rb4-service"?"rb4":"rb";
+  const defaults={https:["staff","internet"],dns:["staff","resolver"],smtp:["staff","mail"],http:["staff","internet"],ssh:["it","server"],rdp:["external","server"]};
+  const sync=()=>{
+    const service=SERVICES[sel.value], pair=defaults[sel.value]||["*","*"];
+    for(const [suffix,value] of [["source",pair[0]],["target",pair[1]],["dir",service.dir],["proto",service.proto]]){
+      const field=document.getElementById(prefix+"-"+suffix);
+      if(field)field.value=value;
+    }
+  };
+  sel.addEventListener("change",sync);sync();
 }
 
 function syncList(containerId, rules, editable){
@@ -1461,11 +1470,12 @@ document.addEventListener("DOMContentLoaded",()=>{
   document.getElementById("fw4-reset").addEventListener("click",()=>{fw4rules=FW4_START.map(r=>({...r})); syncList("fw4-rules",fw4rules,true); document.getElementById("fw4-after").style.display="none";});
   document.getElementById("fw4-run").addEventListener("click",()=>{
     const r=runTraffic("fw4-traffic",FW4_TRAFFIC,fw4rules,null);
-    const fixed = r.disr===0 && r.breach===0 && r.work===3 && r.stop===1;
+    const broadIndex=fw4rules.findIndex(rule=>rule.key==="broad-deny");
+    const fixed = r.disr===0 && r.breach===0 && r.work===3 && r.stop===1 && broadIndex>=3;
     document.getElementById("fw4-next").disabled = !fixed;
     document.getElementById("fw4-after").style.display = fixed? "block":"none";
     document.getElementById("fw4-hint").textContent = fixed? "Fixed — every service works and the intruder is still blocked." :
-      (r.disr>0? "Still "+r.disr+" service(s) blocked. A deny rule near the top is catching them — remove or reorder it." : "Careful — you've now let the intruder in. Keep SSH blocked.");
+      (r.disr>0? "Still "+r.disr+" service(s) blocked. Move the broad staff-deny rule below the specific allows." : "Keep the broad deny rule after the specific allowances and leave external SSH blocked.");
   });
 
   // FW stage 5 unseen
@@ -1509,5 +1519,6 @@ document.addEventListener("DOMContentLoaded",()=>{
   }
 });
 </script>
+<script src="assets/learning.js"></script>
 </body>
 </html>
