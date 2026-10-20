@@ -1,0 +1,95 @@
+/* Security Bench: plain instructional workbench, not a product landing page. */
+:root{--paper:#f2f4f1;--bench:#e9eeea;--panel:#fff;--ink:#20302d;--ink-soft:#476158;--ink-faint:#60746c;--rule:#b8c8be;--rule-firm:#879d90;--allow:#1e6348;--allow-wash:#e1f0e7;--block:#aa433a;--block-wash:#fbeae5;--amber:#996421;--amber-wash:#f4ead6;--sans:"IBM Plex Sans",system-ui,Arial,sans-serif;--mono:"IBM Plex Mono",Consolas,monospace;--maxw:1200px}
+html{scroll-behavior:auto}
+body{font-family:var(--sans);font-size:16px;line-height:1.52}
+.wrap{padding:0 clamp(15px,3vw,38px)}
+header.bar{background:#e7ebe7;backdrop-filter:none;border-bottom:2px solid #1d4034}
+.bar-inner{padding:13px clamp(15px,3vw,38px)}
+.brand{font-size:14px;letter-spacing:0}
+.brand span{color:#566c5f}
+.stepno{color:#365e4c}
+.spine .seg{border-radius:0;height:5px}
+main{padding:26px 0 80px}
+h1{font-size:clamp(29px,3.8vw,45px);line-height:1.12;letter-spacing:-.028em}
+h2{font-size:clamp(25px,2.8vw,34px);line-height:1.2;letter-spacing:-.02em}
+h3{font-size:19px;letter-spacing:0}
+.lede,.teach p,.teach li{font-family:var(--sans);font-size:1rem;line-height:1.58;color:#2b3e35}
+.teach{max-width:76ch}
+.kicker{font-family:var(--sans);font-size:13px;color:var(--ink-soft);font-weight:600;letter-spacing:0}
+.cover{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.95fr);grid-template-rows:auto auto auto;column-gap:50px;align-content:center;align-items:center;padding:65px 0}
+.cover .kicker{grid-column:1;align-self:end}
+.cover h1{grid-column:1}
+.cover .lede{grid-column:1}
+.cover .demo{grid-column:2;grid-row:1 / span 4;margin:0;max-width:none;align-self:center;box-shadow:none}
+.cover .nav{grid-column:1;margin-top:20px}
+.cover h1{max-width:22ch}
+.cover .lede{font-style:normal;color:#415951}
+.demo,.panel,.readout,.check,.fieldcards .fcard,.file,.opt,.btn,select,.iconbtn,.rrow,.pkt,.examq,textarea.copybox{border-radius:0}
+.demo-cell{padding:20px}
+.demo-gate svg{color:var(--allow)}
+.demo-foot{align-items:flex-start;gap:8px}
+.stamp{transform:none;letter-spacing:0;border-width:1px;font-family:var(--sans);font-weight:700}
+.stamp.threat{background:var(--block-wash)}
+.stamp.clean,.stamp.allow{background:var(--allow-wash)}
+.panel{background:var(--panel);border:1px solid #a6b7aa}
+.panel-h{background:#e9efea;color:#344c3e;font-size:13px;font-weight:650;letter-spacing:0}
+.panel-h .tag{color:#688073;font-weight:400}
+.panel-b{padding:17px}
+.file{border-radius:0;border-left:4px solid var(--rule-firm)}
+.spec-list{gap:8px}
+.file .fname{font-size:14px}
+.file .props{gap:6px}
+.prop{border-radius:0;font-size:12px;background:#eef3ee;color:#334b3e}
+.prop.sig{background:#fff9e9;color:#674f24}
+.vreason{font-family:var(--sans);font-size:13px;color:#435c50}
+.callout{border-radius:0}
+.callout p,.note,.ctl .hint,.fcard .desc,.cfx,.default-rule{font-family:var(--sans);font-style:normal}
+.bench{gap:16px}
+.check{padding:16px;border-left:4px solid var(--allow)}
+.btn{border-radius:0;font-size:14px;transition:background .12s;box-shadow:none}
+.btn:active{transform:none}
+.btn.ghost:hover{background:#e6eee8}
+.nav{margin-top:29px;padding-top:16px}
+.opt{border-radius:0}
+.rrow{grid-template-columns:33px minmax(0,1fr) auto}
+.rrow .rtxt{overflow-wrap:anywhere}
+.rrow .rtxt .mono{font-size:12px}
+.rulebuilder{align-items:end}
+.mini-field{display:flex;flex-direction:column;gap:5px;min-width:130px;color:var(--ink-soft);font-size:12px;font-weight:600}
+.mini-field select{max-width:180px;font-size:13px}
+.rulebuilder>select{align-self:end}
+.student-note{margin:22px 0;padding:16px 18px;border:1px solid #a6b8aa;border-left:4px solid var(--allow);background:#f9fbf8;max-width:850px}
+.student-note label{font-weight:700;display:block;margin-bottom:4px}
+.student-note textarea{background:#fff;border:1px solid #9dac9d;border-radius:0;display:block;width:100%;font:15px/1.5 var(--sans);padding:10px;min-height:98px;resize:vertical}
+.student-note textarea:focus{outline:3px solid #deb86d;outline-offset:1px}
+.activity-hint{font-size:13px;color:#536c5e;margin-bottom:10px}
+.save-label{display:block;font-size:11px;color:#648173;margin-top:6px}
+.policy-comparison,.packet-primer,.worked-rule{max-width:960px;margin:22px 0;padding:17px 19px;background:#e8efe9;border:1px solid #b0c4b6}
+.policy-comparison h3,.worked-rule h3,.packet-primer h3{margin:0 0 9px}
+.policy-comparison p:last-child,.worked-rule p:last-child{margin-bottom:0}
+.compare-table{width:100%;border-collapse:collapse;margin:12px 0;text-align:left;font-size:13px;background:#fff}
+.compare-table th,.compare-table td{border-bottom:1px solid #ccd9ce;padding:10px;vertical-align:top}
+.compare-table th{font-weight:700;background:#f2f6f2}
+.compare-table td button{background:#fff;border:1px solid #9eae9f;padding:7px 10px;text-align:left}
+.compare-table td button:hover{background:#e5f1e7}
+.packet-explanation{padding:9px 12px;background:#fff;border-left:3px solid var(--allow);font-size:14px}
+.case-question,.prediction{max-width:820px;margin:19px 0;padding:16px;border:1px solid #afbfb1;background:#fff}
+.case-question strong{display:block;margin-bottom:12px;font-size:15px}
+.case-options{display:flex;flex-direction:column;align-items:stretch;gap:7px}
+.case-options button{background:#fff;border:1px solid #adbcb0;text-align:left;padding:10px;font-size:14px}
+.case-options button:hover,.case-options button.picked{background:#e5f0e8;border-color:#3c7655}
+.case-feedback{margin:10px 0 0;color:#5c6d5e;font-size:14px}
+.case-feedback.fail{color:var(--block)}
+.case-feedback.pass{color:var(--allow)}
+.prediction legend{font-weight:700;padding:0 7px}
+.prediction label{display:block;margin:7px 0;font-size:14px}
+.prediction label input{accent-color:var(--allow)}
+.prediction-feedback{font-size:14px;color:var(--ink-soft);margin:12px 0 0;font-weight:600}
+.rulebuilder{gap:8px}
+.readout{border-radius:0}
+.metric{min-width:120px}
+.examq{max-width:850px;border-width:2px}
+.examq .qtext{font-family:var(--sans)}
+@media(max-width:830px){.cover{display:block;padding:30px 0}.cover .demo{margin:22px 0}.cover h1{max-width:20ch}}
+@media(max-width:620px){.mini-field{min-width:calc(50% - 5px);flex:1}.mini-field select{max-width:100%}.rulebuilder{gap:9px}.panel-b{padding:13px}.compare-table{font-size:12px}.compare-table th,.compare-table td{padding:7px 5px}.cover .demo{max-width:100%}.nav{gap:8px}.nav .btn{font-size:13px}.wrap{padding:0 14px}}
+@media print{.student-note{break-inside:avoid}.student-note textarea{height:auto!important;min-height:100px}.cover{display:none!important}}
