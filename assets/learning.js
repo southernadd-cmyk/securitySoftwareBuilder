@@ -117,7 +117,7 @@ function enhance(){
  const originalScore=$("evidence");
  function updateEvidence(){
    if(!originalScore)return;
-   let raw=originalScore.value.split("MY EXPLANATION AND JUDGEMENT:")[0];
+   let raw=originalScore.value.split("STUDENT WRITTEN EVIDENCE")[0];
    const responses=[["SIGNATURE INVESTIGATION","av1-reason"],["MALWARE VARIANTS","av2-reason"],["HEURISTIC ANALYSIS","av3-reason"],["COMPARISON OF TWO POLICIES","av4-compare"],["UNSEEN ANTIVIRUS REVIEW","av5-reason"],["PACKET FIELDS","fw2-reason"],["FIREWALL RULE RATIONALE","fw3-reason"],["RULE ORDER TROUBLESHOOTING","fw4-reason"],["UNSEEN FIREWALL REVIEW","fw5-reason"],["FINAL AO3 EVALUATION","final-evaluation"]];
    originalScore.value=raw+"\n\nSTUDENT WRITTEN EVIDENCE\n"+responses.map(([heading,id])=>heading+"\n"+(notes[id]||"(not completed)")).join("\n\n");
  }
